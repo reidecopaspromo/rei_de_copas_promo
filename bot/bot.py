@@ -7,7 +7,7 @@ O QUE ESTE ROBÔ FAZ:
 3. Aplica os critérios definidos abaixo (CRITERIOS).
 4. Se a oferta passar, adiciona ela no arquivo ofertas.json e sobe esse
    arquivo para um repositório no GitHub.
-5. Sua landing page (Netlify) lê esse ofertas.json direto do GitHub e
+5. Sua landing page lê esse ofertas.json direto do GitHub e
    mostra as ofertas aprovadas — sem você mexer em nada.
 
 ESTE ARQUIVO PRECISA FICAR RODANDO O TEMPO TODO EM ALGUM SERVIDOR.
@@ -18,12 +18,14 @@ nesta mesma pasta para o passo a passo de colocar isso no ar de graça
 
 import os
 import re
+import io
 import json
 import base64
 import logging
 from datetime import datetime, timezone
 
 import requests
+from PIL import Image, ImageOps, ImageDraw
 from telegram import Update
 from telegram.ext import ApplicationBuilder, MessageHandler, ContextTypes, filters
 
@@ -31,7 +33,7 @@ logging.basicConfig(level=logging.INFO)
 log = logging.getLogger("rei-de-copas-bot")
 
 # ----------------------------------------------------------------------
-# CONFIGURAÇÃO — preencha estes valores (veja o README.md)
+# CONFIGURAÇÃO — preenchida via variáveis de ambiente no Railway
 # ----------------------------------------------------------------------
 
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
@@ -46,8 +48,8 @@ CRITERIOS = {
     "desconto_min": 20,       # em %
     "preco_min": 80,          # em R$ (sem teto máximo)
     "preco_max": None,        # None = sem limite superior
-    "maximo_ofertas_na_pagina": 12,  # mantém a landing page enxuta, remove as mais antigas
-    "limite_diario": 20,      # máximo de ofertas aprovadas por dia
+    "maximo_ofertas_na_pagina": 12,
+    "limite_diario": 20,
 }
 
 PALAVRAS_CHAVE_PET = [
@@ -67,13 +69,11 @@ MARKETPLACES_CONFIAVEIS = [
 
 ARQUIVO_CONTADOR = os.environ.get("GITHUB_CONTADOR_PATH", "contador_diario.json")
 
-# CTA que acompanha cada oferta em destaque na landing page / redes sociais,
-# convidando para o grupo de WhatsApp onde a Lumi publica TODAS as ofertas.
 CTA_TEXTO = "Quer receber essa e muitas outras ofertas em primeira mão? Entre no nosso grupo:"
 LINK_GRUPO_WHATSAPP = os.environ.get("LINK_GRUPO_WHATSAPP", "https://chat.whatsapp.com/SEU-LINK-AQUI")
 
 # ----------------------------------------------------------------------
-# EXTRAÇÃO DE TEXTO — mesma lógica usada no painel de curadoria
+# EXTRAÇÃO DE TEXTO
 # ----------------------------------------------------------------------
 
 def numero_br(s):
@@ -146,7 +146,7 @@ def avaliar(oferta, texto_original):
     return desconto, len(motivos) == 0, motivos
 
 # ----------------------------------------------------------------------
-# GITHUB — lê e atualiza o ofertas.json que a landing page consome
+# GITHUB
 # ----------------------------------------------------------------------
 
 GITHUB_API = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{GITHUB_FILE_PATH}"
@@ -195,6 +195,41 @@ def salvar_imagem(caminho, bytes_imagem):
     return f"https://raw.githubusercontent.com/{GITHUB_REPO}/{GITHUB_BRANCH}/{caminho}"
 
 
+# Fundo creme e moldura dourada — mesma identidade visual da landing page.
+COR_FUNDO_IMAGEM = (244, 241, 232)   # #F4F1E8
+COR_MOLDURA = (214, 168, 79)         # #D6A84F
+TAMANHO_IMAGEM = 800
+ESPESSURA_MOLDURA = 6
+MARGEM_INTERNA = 46
+
+
+def processar_imagem(bytes_originais):
+    """Recebe a foto crua do Telegram e devolve uma versão quadrada,
+    com fundo creme e moldura dourada, pronta para a landing page."""
+    img = Image.open(io.BytesIO(bytes_originais)).convert("RGB")
+
+    canvas = Image.new("RGB", (TAMANHO_IMAGEM, TAMANHO_IMAGEM), COR_FUNDO_IMAGEM)
+
+    area_util = TAMANHO_IMAGEM - 2 * MARGEM_INTERNA
+    img_ajustada = ImageOps.contain(img, (area_util, area_util))
+
+    pos_x = (TAMANHO_IMAGEM - img_ajustada.width) // 2
+    pos_y = (TAMANHO_IMAGEM - img_ajustada.height) // 2
+    canvas.paste(img_ajustada, (pos_x, pos_y))
+
+    desenho = ImageDraw.Draw(canvas)
+    metade = ESPESSURA_MOLDURA // 2
+    desenho.rectangle(
+        [metade, metade, TAMANHO_IMAGEM - metade - 1, TAMANHO_IMAGEM - metade - 1],
+        outline=COR_MOLDURA,
+        width=ESPESSURA_MOLDURA,
+    )
+
+    saida = io.BytesIO()
+    canvas.save(saida, format="JPEG", quality=88)
+    return saida.getvalue()
+
+
 CONTADOR_API = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{ARQUIVO_CONTADOR}"
 
 
@@ -231,7 +266,6 @@ async def nova_mensagem(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not msg:
         return
 
-    # Só processa mensagens do canal configurado (evita pegar teste de outro lugar)
     if CHANNEL_ID and str(msg.chat_id) != str(CHANNEL_ID):
         return
 
@@ -270,10 +304,11 @@ async def nova_mensagem(update: Update, context: ContextTypes.DEFAULT_TYPE):
         try:
             maior_foto = msg.photo[-1]  # a última é sempre a de maior resolução
             arquivo = await context.bot.get_file(maior_foto.file_id)
-            bytes_imagem = bytes(await arquivo.download_as_bytearray())
-            imagem_url = salvar_imagem(f"imagens/{id_oferta}.jpg", bytes_imagem)
+            bytes_originais = bytes(await arquivo.download_as_bytearray())
+            bytes_processados = processar_imagem(bytes_originais)
+            imagem_url = salvar_imagem(f"imagens/{id_oferta}.jpg", bytes_processados)
         except Exception as e:
-            log.error("Falha ao baixar/salvar imagem da oferta: %s", e)
+            log.error("Falha ao baixar/processar/salvar imagem da oferta: %s", e)
 
     nova = {
         "id": id_oferta,
