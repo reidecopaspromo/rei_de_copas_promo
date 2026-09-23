@@ -43,18 +43,37 @@ GITHUB_BRANCH = os.environ.get("GITHUB_BRANCH", "main")
 
 # Critérios de aprovação — ajuste livremente.
 CRITERIOS = {
-    "desconto_min": 30,       # em %
-    "preco_min": 0,           # em R$
-    "preco_max": 500,         # em R$
-    "categorias_permitidas": ["Pet", "Kids"],
-    "maximo_ofertas_na_pagina": 12,
+    "desconto_min": 20,       # em %
+    "preco_min": 80,          # em R$ (sem teto máximo)
+    "preco_max": None,        # None = sem limite superior
+    "maximo_ofertas_na_pagina": 12,  # mantém a landing page enxuta, remove as mais antigas
+    "limite_diario": 20,      # máximo de ofertas aprovadas por dia
 }
 
+PALAVRAS_CHAVE_PET = [
+    "pet", "pets", "cão", "cachorro", "gato", "gata", "felino", "canino",
+    "ração", "petisco", "coleira", "guia", "caixa de areia",
+    "brinquedo pet", "casinha", "cama pet", "tapete higiênico",
+    "shampoo pet", "tosa", "veterinário", "focinheira", "comedouro", "bebedouro",
+    "antipulgas", "vermífugo", "arranhador", "transportadora",
+    "peitoral", "guia retrátil", "escova pet", "removedor de pelos",
+]
+
+MARKETPLACES_CONFIAVEIS = [
+    "amazon.com", "amzn.to",
+    "mercadolivre.com", "meli.la", "mercadolibre.com",
+    "shopee.com.br", "shope.ee",
+]
+
+ARQUIVO_CONTADOR = os.environ.get("GITHUB_CONTADOR_PATH", "contador_diario.json")
+
+# CTA que acompanha cada oferta em destaque na landing page / redes sociais,
+# convidando para o grupo de WhatsApp onde a Lumi publica TODAS as ofertas.
 CTA_TEXTO = "Quer receber essa e muitas outras ofertas em primeira mão? Entre no nosso grupo:"
 LINK_GRUPO_WHATSAPP = os.environ.get("LINK_GRUPO_WHATSAPP", "https://chat.whatsapp.com/SEU-LINK-AQUI")
 
 # ----------------------------------------------------------------------
-# EXTRAÇÃO DE TEXTO
+# EXTRAÇÃO DE TEXTO — mesma lógica usada no painel de curadoria
 # ----------------------------------------------------------------------
 
 def numero_br(s):
@@ -104,7 +123,7 @@ def extrair_oferta(texto):
     return resultado
 
 
-def avaliar(oferta):
+def avaliar(oferta, texto_original):
     if oferta["preco_original"] and oferta["preco_atual"]:
         desconto = round((oferta["preco_original"] - oferta["preco_atual"]) / oferta["preco_original"] * 100)
     else:
@@ -113,14 +132,21 @@ def avaliar(oferta):
     if desconto < CRITERIOS["desconto_min"]:
         motivos.append(f"desconto abaixo de {CRITERIOS['desconto_min']}%")
     preco = oferta["preco_atual"] or 0
-    if preco < CRITERIOS["preco_min"] or preco > CRITERIOS["preco_max"]:
-        motivos.append("fora da faixa de preço")
+    if preco < CRITERIOS["preco_min"]:
+        motivos.append("preço abaixo do mínimo")
+    if CRITERIOS["preco_max"] is not None and preco > CRITERIOS["preco_max"]:
+        motivos.append("preço acima do máximo")
     if not oferta["link"]:
         motivos.append("sem link identificado")
+    elif not any(dominio in oferta["link"].lower() for dominio in MARKETPLACES_CONFIAVEIS):
+        motivos.append("marketplace não reconhecido como confiável")
+    texto_lower = (texto_original or "").lower()
+    if not any(palavra in texto_lower for palavra in PALAVRAS_CHAVE_PET):
+        motivos.append("nenhuma palavra-chave de Pet encontrada")
     return desconto, len(motivos) == 0, motivos
 
 # ----------------------------------------------------------------------
-# GITHUB
+# GITHUB — lê e atualiza o ofertas.json que a landing page consome
 # ----------------------------------------------------------------------
 
 GITHUB_API = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{GITHUB_FILE_PATH}"
@@ -156,6 +182,34 @@ def salvar_ofertas(ofertas, sha):
     resp = requests.put(GITHUB_API, headers=github_headers(), json=body)
     resp.raise_for_status()
 
+
+CONTADOR_API = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{ARQUIVO_CONTADOR}"
+
+
+def carregar_contador_diario():
+    resp = requests.get(CONTADOR_API, headers=github_headers(), params={"ref": GITHUB_BRANCH})
+    hoje = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    if resp.status_code == 200:
+        payload = resp.json()
+        dados = json.loads(base64.b64decode(payload["content"]).decode("utf-8"))
+        if dados.get("data") != hoje:
+            dados = {"data": hoje, "contagem": 0}
+        return dados, payload["sha"]
+    return {"data": hoje, "contagem": 0}, None
+
+
+def salvar_contador_diario(dados, sha):
+    conteudo = json.dumps(dados, ensure_ascii=False, indent=2)
+    body = {
+        "message": "Atualiza contador diário de ofertas (robô Rei de Copas)",
+        "content": base64.b64encode(conteudo.encode("utf-8")).decode("utf-8"),
+        "branch": GITHUB_BRANCH,
+    }
+    if sha:
+        body["sha"] = sha
+    resp = requests.put(CONTADOR_API, headers=github_headers(), json=body)
+    resp.raise_for_status()
+
 # ----------------------------------------------------------------------
 # HANDLER DO TELEGRAM
 # ----------------------------------------------------------------------
@@ -165,6 +219,7 @@ async def nova_mensagem(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not msg:
         return
 
+    # Só processa mensagens do canal configurado (evita pegar teste de outro lugar)
     if CHANNEL_ID and str(msg.chat_id) != str(CHANNEL_ID):
         return
 
@@ -173,11 +228,21 @@ async def nova_mensagem(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
     oferta = extrair_oferta(texto)
-    desconto, aprovada, motivos = avaliar(oferta)
+    desconto, aprovada, motivos = avaliar(oferta, texto)
 
     log.info("Mensagem recebida | aprovada=%s | motivos=%s | texto=%.60s", aprovada, motivos, texto)
 
     if not aprovada:
+        return
+
+    try:
+        contador, sha_contador = carregar_contador_diario()
+    except Exception as e:
+        log.error("Falha ao ler contador diário no GitHub: %s", e)
+        return
+
+    if contador["contagem"] >= CRITERIOS["limite_diario"]:
+        log.info("Limite diário de %s ofertas já atingido, ignorando.", CRITERIOS["limite_diario"])
         return
 
     try:
@@ -205,6 +270,8 @@ async def nova_mensagem(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         salvar_ofertas(ofertas, sha)
         log.info("Oferta aprovada e publicada: %s", nova["nome"])
+        contador["contagem"] += 1
+        salvar_contador_diario(contador, sha_contador)
     except Exception as e:
         log.error("Falha ao salvar ofertas.json no GitHub: %s", e)
 
