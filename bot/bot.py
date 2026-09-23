@@ -7,7 +7,7 @@ O QUE ESTE ROBÔ FAZ:
 3. Aplica os critérios definidos abaixo (CRITERIOS).
 4. Se a oferta passar, adiciona ela no arquivo ofertas.json e sobe esse
    arquivo para um repositório no GitHub.
-5. Sua landing page lê esse ofertas.json direto do GitHub e
+5. Sua landing page (Netlify) lê esse ofertas.json direto do GitHub e
    mostra as ofertas aprovadas — sem você mexer em nada.
 
 ESTE ARQUIVO PRECISA FICAR RODANDO O TEMPO TODO EM ALGUM SERVIDOR.
@@ -31,7 +31,7 @@ logging.basicConfig(level=logging.INFO)
 log = logging.getLogger("rei-de-copas-bot")
 
 # ----------------------------------------------------------------------
-# CONFIGURAÇÃO — preenchida via variáveis de ambiente no Railway
+# CONFIGURAÇÃO — preencha estes valores (veja o README.md)
 # ----------------------------------------------------------------------
 
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
@@ -183,6 +183,18 @@ def salvar_ofertas(ofertas, sha):
     resp.raise_for_status()
 
 
+def salvar_imagem(caminho, bytes_imagem):
+    api = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{caminho}"
+    body = {
+        "message": "Adiciona imagem de oferta (robô Rei de Copas)",
+        "content": base64.b64encode(bytes_imagem).decode("utf-8"),
+        "branch": GITHUB_BRANCH,
+    }
+    resp = requests.put(api, headers=github_headers(), json=body)
+    resp.raise_for_status()
+    return f"https://raw.githubusercontent.com/{GITHUB_REPO}/{GITHUB_BRANCH}/{caminho}"
+
+
 CONTADOR_API = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{ARQUIVO_CONTADOR}"
 
 
@@ -251,14 +263,27 @@ async def nova_mensagem(update: Update, context: ContextTypes.DEFAULT_TYPE):
         log.error("Falha ao ler ofertas.json no GitHub: %s", e)
         return
 
+    id_oferta = f"{msg.message_id}-{int(datetime.now(timezone.utc).timestamp())}"
+
+    imagem_url = ""
+    if msg.photo:
+        try:
+            maior_foto = msg.photo[-1]  # a última é sempre a de maior resolução
+            arquivo = await context.bot.get_file(maior_foto.file_id)
+            bytes_imagem = bytes(await arquivo.download_as_bytearray())
+            imagem_url = salvar_imagem(f"imagens/{id_oferta}.jpg", bytes_imagem)
+        except Exception as e:
+            log.error("Falha ao baixar/salvar imagem da oferta: %s", e)
+
     nova = {
-        "id": f"{msg.message_id}-{int(datetime.now(timezone.utc).timestamp())}",
+        "id": id_oferta,
         "nome": oferta["nome"] or "Oferta sem título",
         "preco_original": oferta["preco_original"],
         "preco_atual": oferta["preco_atual"],
         "desconto": desconto,
         "cupom": oferta["cupom"],
         "link": oferta["link"],
+        "imagem": imagem_url,
         "cta_texto": CTA_TEXTO,
         "link_grupo": LINK_GRUPO_WHATSAPP,
         "capturado_em": datetime.now(timezone.utc).isoformat(),
