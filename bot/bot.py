@@ -47,7 +47,7 @@ GITHUB_BRANCH = os.environ.get("GITHUB_BRANCH", "main")
 # Critérios de aprovação — ajuste livremente.
 CRITERIOS = {
     "desconto_min": 20,       # em %
-    "preco_min": 80,          # em R$ (sem teto máximo)
+    "preco_min": 50,          # em R$ (sem teto máximo)
     "preco_max": None,        # None = sem limite superior
     "maximo_ofertas_na_pagina": 12,  # mantém a landing page enxuta, remove as mais antigas
     "limite_diario": 20,      # máximo de ofertas aprovadas por dia
