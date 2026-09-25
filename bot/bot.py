@@ -7,7 +7,7 @@ O QUE ESTE ROBÔ FAZ:
 3. Aplica os critérios definidos abaixo (CRITERIOS).
 4. Se a oferta passar, adiciona ela no arquivo ofertas.json e sobe esse
    arquivo para um repositório no GitHub.
-5. Sua landing page lê esse ofertas.json direto do GitHub e
+5. Sua landing page (Netlify) lê esse ofertas.json direto do GitHub e
    mostra as ofertas aprovadas — sem você mexer em nada.
 
 ESTE ARQUIVO PRECISA FICAR RODANDO O TEMPO TODO EM ALGUM SERVIDOR.
@@ -22,6 +22,7 @@ import io
 import json
 import base64
 import logging
+from collections import Counter
 from datetime import datetime, timezone
 
 import requests
@@ -33,7 +34,7 @@ logging.basicConfig(level=logging.INFO)
 log = logging.getLogger("rei-de-copas-bot")
 
 # ----------------------------------------------------------------------
-# CONFIGURAÇÃO — preenchida via variáveis de ambiente no Railway
+# CONFIGURAÇÃO — preencha estes valores (veja o README.md)
 # ----------------------------------------------------------------------
 
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
@@ -48,8 +49,10 @@ CRITERIOS = {
     "desconto_min": 20,       # em %
     "preco_min": 80,          # em R$ (sem teto máximo)
     "preco_max": None,        # None = sem limite superior
-    "maximo_ofertas_na_pagina": 12,
-    "limite_diario": 20,
+    "maximo_ofertas_na_pagina": 12,  # mantém a landing page enxuta, remove as mais antigas
+    "limite_diario": 20,      # máximo de ofertas aprovadas por dia
+    "tolerancia_aumento_preco": 0.05,   # 5% — variações pequenas (centavos) não derrubam a oferta
+    "intervalo_revalidacao_horas": 3,   # de quanto em quanto tempo o robô confere os preços já publicados
 }
 
 PALAVRAS_CHAVE_PET = [
@@ -69,11 +72,13 @@ MARKETPLACES_CONFIAVEIS = [
 
 ARQUIVO_CONTADOR = os.environ.get("GITHUB_CONTADOR_PATH", "contador_diario.json")
 
+# CTA que acompanha cada oferta em destaque na landing page / redes sociais,
+# convidando para o grupo de WhatsApp onde a Lumi publica TODAS as ofertas.
 CTA_TEXTO = "Quer receber essa e muitas outras ofertas em primeira mão? Entre no nosso grupo:"
 LINK_GRUPO_WHATSAPP = os.environ.get("LINK_GRUPO_WHATSAPP", "https://chat.whatsapp.com/SEU-LINK-AQUI")
 
 # ----------------------------------------------------------------------
-# EXTRAÇÃO DE TEXTO
+# EXTRAÇÃO DE TEXTO — mesma lógica usada no painel de curadoria
 # ----------------------------------------------------------------------
 
 def numero_br(s):
@@ -146,7 +151,7 @@ def avaliar(oferta, texto_original):
     return desconto, len(motivos) == 0, motivos
 
 # ----------------------------------------------------------------------
-# GITHUB
+# GITHUB — lê e atualiza o ofertas.json que a landing page consome
 # ----------------------------------------------------------------------
 
 GITHUB_API = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{GITHUB_FILE_PATH}"
@@ -230,7 +235,128 @@ def processar_imagem(bytes_originais):
     return saida.getvalue()
 
 
-CONTADOR_API = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{ARQUIVO_CONTADOR}"
+# ----------------------------------------------------------------------
+# REVALIDAÇÃO DE PREÇO — confere se o preço anunciado ainda é real
+# ----------------------------------------------------------------------
+# O Cupom Radar manda o preço do momento em que a oferta foi postada no
+# Telegram. Se o preço subir depois (promoção relâmpago que acabou,
+# variação de estoque etc.), a landing continuaria mostrando o preço
+# antigo até alguém clicar e cair num valor maior — o que já aconteceu.
+# Esta rotina roda sozinha de tempos em tempos e tira do ar qualquer
+# oferta cujo preço real, no link, esteja mais alto que o anunciado.
+# Ela NUNCA remove uma oferta só porque não conseguiu confirmar o preço
+# (site bloqueou o robô, layout mudou etc.) — na dúvida, mantém como está.
+
+HEADERS_REVALIDACAO = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                  "(KHTML, like Gecko) Chrome/124.0 Safari/537.36",
+    "Accept-Language": "pt-BR,pt;q=0.9",
+}
+
+
+def buscar_preco_atual(url, timeout=12):
+    """Tenta confirmar o preço atual do produto no link de afiliado.
+    Retorna um float ou None se não for possível confirmar com segurança —
+    nunca chuta um valor."""
+    if not url:
+        return None
+    try:
+        resp = requests.get(url, headers=HEADERS_REVALIDACAO, timeout=timeout, allow_redirects=True)
+        if resp.status_code != 200:
+            return None
+        pagina = resp.text
+    except Exception as e:
+        log.warning("Não foi possível abrir o link para revalidar preço (%s): %s", url, e)
+        return None
+
+    candidatos = []
+
+    # Open Graph / schema.org — presente na maioria dos marketplaces sérios
+    for padrao in [
+        r'property="product:price:amount"\s+content="([\d.,]+)"',
+        r'itemprop="price"\s+content="([\d.,]+)"',
+    ]:
+        m = re.search(padrao, pagina)
+        if m:
+            valor = numero_br(m.group(1)) if "," in m.group(1) else float(m.group(1))
+            if valor:
+                candidatos.append(valor)
+
+    # Mercado Livre — preço fracionado (parte inteira + centavos)
+    m = re.search(r'andes-money-amount__fraction">([\d.]+)<', pagina)
+    if m:
+        inteiro = m.group(1).replace(".", "")
+        centavos_m = re.search(r'andes-money-amount__cents">(\d{1,2})<', pagina)
+        centavos = centavos_m.group(1) if centavos_m else "00"
+        candidatos.append(float(f"{inteiro}.{centavos}"))
+
+    # Amazon — preço fracionado clássico
+    m = re.search(r'a-price-whole">([\d.,]+)<', pagina)
+    if m:
+        inteiro = m.group(1).replace(".", "").replace(",", "")
+        centavos_m = re.search(r'a-price-fraction">(\d{1,2})<', pagina)
+        centavos = centavos_m.group(1) if centavos_m else "00"
+        candidatos.append(float(f"{inteiro}.{centavos}"))
+
+    if not candidatos:
+        return None
+
+    # usa o valor mais frequente entre os padrões encontrados — mais
+    # confiável do que confiar cegamente no primeiro que aparecer
+    return Counter(candidatos).most_common(1)[0][0]
+
+
+async def revalidar_precos(context: ContextTypes.DEFAULT_TYPE):
+    log.info("Revalidação periódica de preços iniciada...")
+    try:
+        ofertas, sha = carregar_ofertas_atuais()
+    except Exception as e:
+        log.error("Falha ao ler ofertas.json para revalidação: %s", e)
+        return
+
+    if not ofertas:
+        return
+
+    tolerancia = CRITERIOS["tolerancia_aumento_preco"]
+    mantidas = []
+    removidas = []
+    mudou = False
+
+    for oferta in ofertas:
+        preco_listado = oferta.get("preco_atual")
+        preco_real = buscar_preco_atual(oferta.get("link"))
+
+        if preco_real is None or preco_listado is None:
+            mantidas.append(oferta)  # não deu pra confirmar — não mexe
+            continue
+
+        if preco_real > preco_listado * (1 + tolerancia):
+            removidas.append((oferta.get("nome"), preco_listado, preco_real))
+            mudou = True
+            continue
+
+        if preco_real < preco_listado:
+            oferta["preco_atual"] = preco_real  # preço caiu ainda mais — atualiza a favor do usuário
+            mudou = True
+
+        mantidas.append(oferta)
+
+    if removidas:
+        log.info("Removidas %s oferta(s) com preço desatualizado:", len(removidas))
+        for nome, antigo, novo in removidas:
+            log.info("   - %s | anunciado R$ %.2f | agora R$ %.2f", nome, antigo, novo)
+
+    if mudou:
+        try:
+            salvar_ofertas(mantidas, sha)
+            log.info("ofertas.json atualizado após revalidação de preços.")
+        except Exception as e:
+            log.error("Falha ao salvar ofertas.json após revalidação: %s", e)
+    else:
+        log.info("Revalidação concluída, nenhum preço fora do combinado.")
+
+
+
 
 
 def carregar_contador_diario():
@@ -266,6 +392,7 @@ async def nova_mensagem(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not msg:
         return
 
+    # Só processa mensagens do canal configurado (evita pegar teste de outro lugar)
     if CHANNEL_ID and str(msg.chat_id) != str(CHANNEL_ID):
         return
 
@@ -344,6 +471,14 @@ def main():
 
     app = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()
     app.add_handler(MessageHandler((filters.TEXT | filters.CAPTION) & (~filters.COMMAND), nova_mensagem))
+
+    intervalo_segundos = CRITERIOS["intervalo_revalidacao_horas"] * 60 * 60
+    app.job_queue.run_repeating(
+        revalidar_precos,
+        interval=intervalo_segundos,
+        first=10 * 60,  # espera 10 min após o robô subir antes da primeira checagem
+        name="revalidar_precos",
+    )
 
     log.info("Robô no ar, escutando o canal do Telegram...")
     app.run_polling()
