@@ -67,31 +67,4 @@ CRITERIOS = {
 }
 
 PALAVRAS_CHAVE_PET = [
-    "pet", "pets", "cão", "cachorro", "gato", "gata", "felino", "canino",
-    "ração", "petisco", "coleira", "guia", "caixa de areia",
-    "brinquedo pet", "casinha", "cama pet", "tapete higiênico",
-    "shampoo pet", "tosa", "veterinário", "focinheira", "comedouro", "bebedouro",
-    "antipulgas", "vermífugo", "arranhador", "transportadora",
-    "peitoral", "guia retrátil", "escova pet", "removedor de pelos",
-]
-
-# Filtro extra por palavra-chave. Só o Pet usa (mantém o comportamento de antes).
-# Os outros nichos confiam no canal: None = sem filtro de palavra-chave.
-PALAVRAS_CHAVE_POR_NICHO = {
-    "pet": PALAVRAS_CHAVE_PET,
-    "tecnologia": None,
-    "casa": None,
-    "fitness": None,
-}
-
-MARKETPLACES_CONFIAVEIS = [
-    "amazon.com", "amzn.to",
-    "mercadolivre.com", "meli.la", "mercadolibre.com",
-    "shopee.com.br", "shope.ee",
-]
-
-ARQUIVO_CONTADOR = os.environ.get("GITHUB_CONTADOR_PATH", "contador_diario.json")
-
-# CTA que acompanha cada oferta em destaque na landing page / redes sociais,
-# convidando para o grupo de WhatsApp onde TODAS as ofertas são publicadas.
-CTA_TEXTO = "Quer receber essa
+    "pet", "pets", "cão", "cachorro", "gato", "gata", "felino",
