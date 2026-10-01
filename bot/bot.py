@@ -317,6 +317,32 @@ HEADERS_REVALIDACAO = {
 }
 
 
+_pagina_debug_salva = False
+
+
+def _salvar_pagina_debug(pagina):
+    """DIAGNÓSTICO TEMPORÁRIO: guarda no GitHub (pasta debug/) UMA cópia de
+    página que o robô não conseguiu ler, para descobrir onde está o preço.
+    Só salva uma vez por execução e nunca interrompe a revalidação."""
+    global _pagina_debug_salva
+    if _pagina_debug_salva:
+        return
+    _pagina_debug_salva = True
+    try:
+        caminho = f"debug/pagina_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}.html"
+        api = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{caminho}"
+        body = {
+            "message": "Diagnóstico: cópia de página para revalidação (robô Rei de Copas)",
+            "content": base64.b64encode(pagina.encode("utf-8")).decode("utf-8"),
+            "branch": GITHUB_BRANCH,
+        }
+        resp = requests.put(api, headers=github_headers(), json=body)
+        resp.raise_for_status()
+        log.warning("Revalidação: cópia da página salva para diagnóstico em %s", caminho)
+    except Exception as e:
+        log.warning("Revalidação: não consegui salvar a página de diagnóstico: %s", e)
+
+
 def buscar_preco_atual(url, timeout=12):
     """Tenta confirmar o preço atual do produto no link de afiliado.
     Retorna um float ou None se não for possível confirmar com segurança —
@@ -364,6 +390,7 @@ def buscar_preco_atual(url, timeout=12):
 
     if not candidatos:
         log.warning("Revalidação: preço não encontrado na página de %s (endereço final: %s, tamanho %s)", url, resp.url, len(pagina))
+        _salvar_pagina_debug(pagina)
         return None
 
     # usa o valor mais frequente entre os padrões encontrados
