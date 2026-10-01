@@ -317,30 +317,48 @@ HEADERS_REVALIDACAO = {
 }
 
 
-_pagina_debug_salva = False
+def _cartoes_de_produto(no):
+    """Percorre os dados da página e devolve todos os cartões de produto."""
+    if isinstance(no, dict):
+        cartoes = no.get("polycards")
+        if isinstance(cartoes, list):
+            for cartao in cartoes:
+                if isinstance(cartao, dict):
+                    yield cartao
+        for valor in no.values():
+            yield from _cartoes_de_produto(valor)
+    elif isinstance(no, list):
+        for valor in no:
+            yield from _cartoes_de_produto(valor)
 
 
-def _salvar_pagina_debug(pagina):
-    """DIAGNÓSTICO TEMPORÁRIO: guarda no GitHub (pasta debug/) UMA cópia de
-    página que o robô não conseguiu ler, para descobrir onde está o preço.
-    Só salva uma vez por execução e nunca interrompe a revalidação."""
-    global _pagina_debug_salva
-    if _pagina_debug_salva:
-        return
-    _pagina_debug_salva = True
+def preco_pagina_afiliado(pagina):
+    """Os links meli.la abrem a página de afiliado do Mercado Livre
+    (mercadolivre.com.br/social/...). Ela mostra o produto compartilhado em
+    destaque e, abaixo, outras recomendações. O preço não está no HTML visível,
+    e sim nos dados internos da página. Pega SÓ o preço do produto
+    compartilhado, nunca o das recomendações. Retorna None se não achar."""
+    marcador = "_n.ctx.r="
+    inicio = pagina.find(marcador)
+    if inicio == -1:
+        return None
     try:
-        caminho = f"debug/pagina_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}.html"
-        api = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{caminho}"
-        body = {
-            "message": "Diagnóstico: cópia de página para revalidação (robô Rei de Copas)",
-            "content": base64.b64encode(pagina.encode("utf-8")).decode("utf-8"),
-            "branch": GITHUB_BRANCH,
-        }
-        resp = requests.put(api, headers=github_headers(), json=body)
-        resp.raise_for_status()
-        log.warning("Revalidação: cópia da página salva para diagnóstico em %s", caminho)
-    except Exception as e:
-        log.warning("Revalidação: não consegui salvar a página de diagnóstico: %s", e)
+        dados, _ = json.JSONDecoder().raw_decode(pagina[inicio + len(marcador):])
+        dados_pagina = dados["appProps"]["pageProps"]["data"]
+        alvo = dados_pagina["shared_item"]["id"]
+    except Exception:
+        return None
+    for cartao in _cartoes_de_produto(dados_pagina):
+        meta = cartao.get("metadata") or {}
+        if alvo not in (meta.get("id"), meta.get("product_id")):
+            continue
+        for componente in cartao.get("components") or []:
+            if componente.get("type") != "price":
+                continue
+            valor = ((componente.get("price") or {}).get("current_price") or {}).get("value")
+            if isinstance(valor, (int, float)) and valor > 0:
+                return float(valor)
+    return None
 
 
 def buscar_preco_atual(url, timeout=12):
@@ -358,6 +376,13 @@ def buscar_preco_atual(url, timeout=12):
     except Exception as e:
         log.warning("Não foi possível abrir o link para revalidar preço (%s): %s", url, e)
         return None
+
+    # Página de afiliado do Mercado Livre (onde os links meli.la caem)
+    if "/social/" in resp.url:
+        preco = preco_pagina_afiliado(pagina)
+        if preco is None:
+            log.warning("Revalidação: produto não encontrado na página de afiliado de %s", url)
+        return preco
 
     candidatos = []
 
@@ -390,7 +415,6 @@ def buscar_preco_atual(url, timeout=12):
 
     if not candidatos:
         log.warning("Revalidação: preço não encontrado na página de %s (endereço final: %s, tamanho %s)", url, resp.url, len(pagina))
-        _salvar_pagina_debug(pagina)
         return None
 
     # usa o valor mais frequente entre os padrões encontrados
@@ -411,6 +435,9 @@ async def revalidar_precos(context: ContextTypes.DEFAULT_TYPE):
     tolerancia = CRITERIOS["tolerancia_aumento_preco"]
     mantidas = []
     removidas = []
+    atualizadas = []
+    conferidas = 0
+    nao_conferidas = 0
     mudou = False
 
     for oferta in ofertas:
@@ -418,20 +445,35 @@ async def revalidar_precos(context: ContextTypes.DEFAULT_TYPE):
         preco_real = buscar_preco_atual(oferta.get("link"))
 
         if preco_real is None or preco_listado is None:
+            nao_conferidas += 1
             mantidas.append(oferta)  # não deu pra confirmar — não mexe
             continue
 
+        conferidas += 1
+
+        # Subiu mais que a tolerância (5%): sai do site
         if preco_real > preco_listado * (1 + tolerancia):
             removidas.append((oferta.get("nome"), preco_listado, preco_real))
             mudou = True
             continue
 
-        if preco_real < preco_listado:
-            oferta["preco_atual"] = preco_real  # preço caiu ainda mais — atualiza a favor do usuário
+        # Qualquer outra mudança (caiu, ou subiu até 5%): atualiza preço e desconto
+        if abs(preco_real - preco_listado) >= 0.01:
+            oferta["preco_atual"] = preco_real
+            original = oferta.get("preco_original")
+            if original:
+                oferta["desconto"] = max(0, round((original - preco_real) / original * 100))
+            atualizadas.append((oferta.get("nome"), preco_listado, preco_real))
             mudou = True
 
         mantidas.append(oferta)
 
+    log.info("Revalidação: %s oferta(s) conferidas, %s não deu para conferir.",
+             conferidas, nao_conferidas)
+    if atualizadas:
+        log.info("Revalidação: %s oferta(s) com preço atualizado:", len(atualizadas))
+        for nome, antigo, novo in atualizadas:
+            log.info("   - %s | era R$ %.2f | agora R$ %.2f", nome, antigo, novo)
     if removidas:
         log.info("Removidas %s oferta(s) com preço desatualizado:", len(removidas))
         for nome, antigo, novo in removidas:
@@ -452,7 +494,7 @@ async def revalidar_precos(context: ContextTypes.DEFAULT_TYPE):
         except Exception as e:
             log.error("Falha ao salvar ofertas.json após revalidação: %s", e)
     else:
-        log.info("Revalidação concluída, nenhum preço fora do combinado.")
+        log.info("Revalidação concluída, nenhuma mudança de preço.")
 
 
 # ----------------------------------------------------------------------
