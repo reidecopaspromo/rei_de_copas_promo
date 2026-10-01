@@ -531,6 +531,20 @@ def salvar_contador_diario(dados, sha):
 # HANDLER DO TELEGRAM
 # ----------------------------------------------------------------------
 
+def _chave_produto(oferta):
+    """Nome do produto sem o trecho de preço (' — 😱 DE: R$...'), em minúsculas,
+    para reconhecer o mesmo produto mesmo que o link de afiliado mude."""
+    nome = (oferta.get("nome") or "").split(" — ")[0]
+    return re.sub(r"\s+", " ", nome).strip().lower()
+
+
+def _mesmo_produto(a, b):
+    if a.get("link") and a.get("link") == b.get("link"):
+        return True
+    chave = _chave_produto(a)
+    return bool(chave) and chave == _chave_produto(b)
+
+
 async def nova_mensagem(update: Update, context: ContextTypes.DEFAULT_TYPE):
     msg = update.effective_message
     if not msg:
@@ -602,6 +616,13 @@ async def nova_mensagem(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "link_grupo": LINK_GRUPO_WHATSAPP,
         "capturado_em": datetime.now(timezone.utc).isoformat(),
     }
+
+    # Mesmo produto já no site: substitui pela versão nova (preço e validade atualizados)
+    repetidas = [o for o in ofertas if _mesmo_produto(o, nova)]
+    if repetidas:
+        log.info("[%s] Produto já estava no site, substituindo pela versão nova: %s",
+                 nicho, nova["nome"])
+        ofertas = [o for o in ofertas if not _mesmo_produto(o, nova)]
 
     ofertas.insert(0, nova)
     ofertas = aplicar_limites(ofertas)
