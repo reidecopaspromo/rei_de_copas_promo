@@ -570,6 +570,28 @@ async def nova_mensagem(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not aprovada:
         return
 
+    # Confere o preço na loja ANTES de publicar: a lista do Cupom Radar, quando
+    # roda de novo, reenvia o preço da época em que o produto foi marcado.
+    preco_loja = buscar_preco_atual(oferta["link"])
+    anunciado = oferta["preco_atual"]
+    if preco_loja is not None and anunciado:
+        if preco_loja > anunciado * (1 + CRITERIOS["tolerancia_aumento_preco"]):
+            log.info("[%s] Oferta recusada, preço na loja subiu mais de 5%% "
+                     "(mensagem R$ %.2f, loja R$ %.2f): %s",
+                     nicho, anunciado, preco_loja, oferta["nome"])
+            return
+        if abs(preco_loja - anunciado) >= 0.01:
+            log.info("[%s] Preço corrigido na entrada (mensagem R$ %.2f, loja R$ %.2f): %s",
+                     nicho, anunciado, preco_loja, oferta["nome"])
+            oferta["preco_atual"] = preco_loja
+            desconto, aprovada, motivos = avaliar(oferta, texto, nicho)
+            if not aprovada:
+                log.info("[%s] Oferta recusada após corrigir o preço | motivos=%s", nicho, motivos)
+                return
+    elif preco_loja is None:
+        log.info("[%s] Não deu para conferir o preço na loja, publicando com o preço da mensagem "
+                 "(a próxima conferência corrige).", nicho)
+
     try:
         contador, sha_contador = carregar_contador_diario()
     except Exception as e:
