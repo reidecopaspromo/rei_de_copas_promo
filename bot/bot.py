@@ -326,6 +326,7 @@ def buscar_preco_atual(url, timeout=12):
     try:
         resp = requests.get(url, headers=HEADERS_REVALIDACAO, timeout=timeout, allow_redirects=True)
         if resp.status_code != 200:
+            log.warning("Revalidação: link %s respondeu código %s (endereço final: %s)", url, resp.status_code, resp.url)
             return None
         pagina = resp.text
     except Exception as e:
@@ -362,6 +363,7 @@ def buscar_preco_atual(url, timeout=12):
         candidatos.append(float(f"{inteiro}.{centavos}"))
 
     if not candidatos:
+        log.warning("Revalidação: preço não encontrado na página de %s (endereço final: %s, tamanho %s)", url, resp.url, len(pagina))
         return None
 
     # usa o valor mais frequente entre os padrões encontrados
