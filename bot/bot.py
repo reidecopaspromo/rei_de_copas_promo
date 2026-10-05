@@ -56,8 +56,10 @@ NICHO_POR_CANAL = {str(canal): nicho for nicho, canal in CANAIS_POR_NICHO.items(
 
 # Critérios de aprovação — ajuste livremente.
 CRITERIOS = {
-    "desconto_min": 20,                 # em %
-    "preco_min": 50,                    # em R$
+    "desconto_min": 20,                 # em % (produtos a partir de "faixa_barata_ate")
+    "preco_min": 20,                    # em R$
+    "faixa_barata_ate": 50,             # em R$: abaixo disso, vale o desconto mínimo mais alto
+    "desconto_min_barato": 30,          # em % (produtos abaixo de "faixa_barata_ate")
     "preco_max": None,                  # None = sem limite superior
     "maximo_ofertas_por_nicho": 21,     # 3 destaques + 18 ofertas do dia, por nicho
     "validade_horas": 48,               # oferta mais velha que isso sai do site (use 99999 para desligar)
@@ -160,9 +162,14 @@ def avaliar(oferta, texto_original, nicho):
     else:
         desconto = 0
     motivos = []
-    if desconto < CRITERIOS["desconto_min"]:
-        motivos.append(f"desconto abaixo de {CRITERIOS['desconto_min']}%")
     preco = oferta["preco_atual"] or 0
+    # Produtos baratos precisam de desconto maior para valer como oferta
+    if preco < CRITERIOS["faixa_barata_ate"]:
+        desconto_exigido = CRITERIOS["desconto_min_barato"]
+    else:
+        desconto_exigido = CRITERIOS["desconto_min"]
+    if desconto < desconto_exigido:
+        motivos.append(f"desconto abaixo de {desconto_exigido}%")
     if preco < CRITERIOS["preco_min"]:
         motivos.append("preço abaixo do mínimo")
     if CRITERIOS["preco_max"] is not None and preco > CRITERIOS["preco_max"]:
