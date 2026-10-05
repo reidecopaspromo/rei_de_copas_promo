@@ -59,9 +59,9 @@ CRITERIOS = {
     "desconto_min": 20,                 # em %
     "preco_min": 50,                    # em R$
     "preco_max": None,                  # None = sem limite superior
-    "maximo_ofertas_por_nicho": 15,     # 3 destaques + 12 ofertas do dia, por nicho
+    "maximo_ofertas_por_nicho": 21,     # 3 destaques + 18 ofertas do dia, por nicho
     "validade_horas": 48,               # oferta mais velha que isso sai do site (use 99999 para desligar)
-    "limite_diario_por_nicho": 15,      # teto de segurança de ofertas aprovadas por dia, por nicho
+    "limite_diario_por_nicho": 40,      # teto de segurança de ofertas aprovadas por dia, por nicho
     "tolerancia_aumento_preco": 0.05,   # 5% — variações pequenas (centavos) não derrubam a oferta
     "intervalo_revalidacao_horas": 3,   # de quanto em quanto tempo o robô confere os preços já publicados
 }
