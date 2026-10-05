@@ -156,6 +156,13 @@ def extrair_oferta(texto):
     return resultado
 
 
+def desconto_exigido(preco):
+    """Produtos baratos precisam de desconto maior para valer como oferta."""
+    if (preco or 0) < CRITERIOS["faixa_barata_ate"]:
+        return CRITERIOS["desconto_min_barato"]
+    return CRITERIOS["desconto_min"]
+
+
 def avaliar(oferta, texto_original, nicho):
     if oferta["preco_original"] and oferta["preco_atual"]:
         desconto = round((oferta["preco_original"] - oferta["preco_atual"]) / oferta["preco_original"] * 100)
@@ -163,13 +170,9 @@ def avaliar(oferta, texto_original, nicho):
         desconto = 0
     motivos = []
     preco = oferta["preco_atual"] or 0
-    # Produtos baratos precisam de desconto maior para valer como oferta
-    if preco < CRITERIOS["faixa_barata_ate"]:
-        desconto_exigido = CRITERIOS["desconto_min_barato"]
-    else:
-        desconto_exigido = CRITERIOS["desconto_min"]
-    if desconto < desconto_exigido:
-        motivos.append(f"desconto abaixo de {desconto_exigido}%")
+    exigido = desconto_exigido(preco)
+    if desconto < exigido:
+        motivos.append(f"desconto abaixo de {exigido}%")
     if preco < CRITERIOS["preco_min"]:
         motivos.append("preço abaixo do mínimo")
     if CRITERIOS["preco_max"] is not None and preco > CRITERIOS["preco_max"]:
@@ -443,6 +446,7 @@ async def revalidar_precos(context: ContextTypes.DEFAULT_TYPE):
     mantidas = []
     removidas = []
     atualizadas = []
+    removidas_desconto = []
     conferidas = 0
     nao_conferidas = 0
     mudou = False
@@ -473,10 +477,24 @@ async def revalidar_precos(context: ContextTypes.DEFAULT_TYPE):
             atualizadas.append((oferta.get("nome"), preco_listado, preco_real))
             mudou = True
 
+        # Se o preço não caiu e o desconto ficou abaixo do mínimo, sai do site
+        # (mesma régua da entrada: 30% abaixo de R$ 50, 20% a partir de R$ 50)
+        original = oferta.get("preco_original")
+        if original and preco_real >= preco_listado - 0.01:
+            desconto_agora = max(0, round((original - preco_real) / original * 100))
+            if desconto_agora < desconto_exigido(preco_real):
+                removidas_desconto.append((oferta.get("nome"), desconto_agora, desconto_exigido(preco_real)))
+                mudou = True
+                continue
+
         mantidas.append(oferta)
 
     log.info("Revalidação: %s oferta(s) conferidas, %s não deu para conferir.",
              conferidas, nao_conferidas)
+    if removidas_desconto:
+        log.info("Revalidação: %s oferta(s) removidas por desconto abaixo do mínimo:", len(removidas_desconto))
+        for nome, desc, exigido in removidas_desconto:
+            log.info("   - %s | desconto agora %s%% | mínimo %s%%", nome, desc, exigido)
     if atualizadas:
         log.info("Revalidação: %s oferta(s) com preço atualizado:", len(atualizadas))
         for nome, antigo, novo in atualizadas:
