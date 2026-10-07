@@ -64,7 +64,10 @@ CRITERIOS = {
     "maximo_ofertas_por_nicho": 21,     # 3 destaques + 18 ofertas do dia, por nicho
     "validade_horas": 48,               # oferta mais velha que isso sai do site (use 99999 para desligar)
     "limite_diario_por_nicho": 40,      # teto de segurança de ofertas aprovadas por dia, por nicho
-    "tolerancia_aumento_preco": 0.05,   # 5% — variações pequenas (centavos) não derrubam a oferta
+    "tolerancia_aumento_preco": 0.10,   # 10% (produtos a partir de "faixa_barata_ate"): até aqui o preço
+                                        # é atualizado e a oferta continua no ar
+    "tolerancia_aumento_preco_barato": 0.20,  # 20% (produtos abaixo de "faixa_barata_ate")
+    "desconto_min_revalidacao": 10,     # em %: depois de publicada, só sai se o desconto cair abaixo disso
     "intervalo_revalidacao_horas": 3,   # de quanto em quanto tempo o robô confere os preços já publicados
 }
 
@@ -161,6 +164,14 @@ def desconto_exigido(preco):
     if (preco or 0) < CRITERIOS["faixa_barata_ate"]:
         return CRITERIOS["desconto_min_barato"]
     return CRITERIOS["desconto_min"]
+
+
+def tolerancia_exigida(preco):
+    """Quanto o preço pode subir sem derrubar a oferta. Produto barato oscila
+    mais em termos percentuais, então tem folga maior."""
+    if (preco or 0) < CRITERIOS["faixa_barata_ate"]:
+        return CRITERIOS["tolerancia_aumento_preco_barato"]
+    return CRITERIOS["tolerancia_aumento_preco"]
 
 
 def avaliar(oferta, texto_original, nicho):
@@ -442,7 +453,6 @@ async def revalidar_precos(context: ContextTypes.DEFAULT_TYPE):
     if not ofertas:
         return
 
-    tolerancia = CRITERIOS["tolerancia_aumento_preco"]
     mantidas = []
     removidas = []
     atualizadas = []
@@ -462,13 +472,13 @@ async def revalidar_precos(context: ContextTypes.DEFAULT_TYPE):
 
         conferidas += 1
 
-        # Subiu mais que a tolerância (5%): sai do site
-        if preco_real > preco_listado * (1 + tolerancia):
+        # Subiu mais que a tolerância (20% abaixo de R$ 50, 10% a partir de R$ 50): sai do site
+        if preco_real > preco_listado * (1 + tolerancia_exigida(preco_listado)):
             removidas.append((oferta.get("nome"), preco_listado, preco_real))
             mudou = True
             continue
 
-        # Qualquer outra mudança (caiu, ou subiu até 5%): atualiza preço e desconto
+        # Qualquer outra mudança (caiu, ou subiu até a tolerância): atualiza preço e desconto
         if abs(preco_real - preco_listado) >= 0.01:
             oferta["preco_atual"] = preco_real
             original = oferta.get("preco_original")
@@ -477,13 +487,15 @@ async def revalidar_precos(context: ContextTypes.DEFAULT_TYPE):
             atualizadas.append((oferta.get("nome"), preco_listado, preco_real))
             mudou = True
 
-        # Se o preço não caiu e o desconto ficou abaixo do mínimo, sai do site
-        # (mesma régua da entrada: 30% abaixo de R$ 50, 20% a partir de R$ 50)
+        # Se o preço não caiu e o desconto virou quase nada, sai do site.
+        # Régua mais folgada que a da entrada (desconto_min_revalidacao), senão
+        # qualquer alta pequena derrubaria a oferta e a tolerância não serviria.
+        minimo_reval = CRITERIOS["desconto_min_revalidacao"]
         original = oferta.get("preco_original")
         if original and preco_real >= preco_listado - 0.01:
             desconto_agora = max(0, round((original - preco_real) / original * 100))
-            if desconto_agora < desconto_exigido(preco_real):
-                removidas_desconto.append((oferta.get("nome"), desconto_agora, desconto_exigido(preco_real)))
+            if desconto_agora < minimo_reval:
+                removidas_desconto.append((oferta.get("nome"), desconto_agora, minimo_reval))
                 mudou = True
                 continue
 
@@ -600,10 +612,11 @@ async def nova_mensagem(update: Update, context: ContextTypes.DEFAULT_TYPE):
     preco_loja = buscar_preco_atual(oferta["link"])
     anunciado = oferta["preco_atual"]
     if preco_loja is not None and anunciado:
-        if preco_loja > anunciado * (1 + CRITERIOS["tolerancia_aumento_preco"]):
-            log.info("[%s] Oferta recusada, preço na loja subiu mais de 5%% "
+        if preco_loja > anunciado * (1 + tolerancia_exigida(anunciado)):
+            log.info("[%s] Oferta recusada, preço na loja subiu mais de %.0f%% "
                      "(mensagem R$ %.2f, loja R$ %.2f): %s",
-                     nicho, anunciado, preco_loja, oferta["nome"])
+                     nicho, tolerancia_exigida(anunciado) * 100,
+                     anunciado, preco_loja, oferta["nome"])
             return
         if abs(preco_loja - anunciado) >= 0.01:
             log.info("[%s] Preço corrigido na entrada (mensagem R$ %.2f, loja R$ %.2f): %s",
