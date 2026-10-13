@@ -22,7 +22,7 @@ import json
 import base64
 import logging
 from collections import Counter
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone, timedelta, time as dtime
 
 import requests
 from PIL import Image, ImageOps, ImageDraw
@@ -104,6 +104,13 @@ CTA_TEXTO = (
     "Entre no nosso grupo:"
 )
 LINK_GRUPO_WHATSAPP = os.environ.get("LINK_GRUPO_WHATSAPP", "https://chat.whatsapp.com/SEU-LINK-AQUI")
+# Grupo de WhatsApp de cada nicho (o grupo geral virou painel interno)
+LINK_GRUPO_POR_NICHO = {
+    "pet":        "https://chat.whatsapp.com/KwAzQsQkH4CEHL3DuinUKL",
+    "tecnologia": "https://chat.whatsapp.com/KZZWOsWCT1KFDYXINpJ6wj",
+    "casa":       "https://chat.whatsapp.com/IGhdGWeevudHOUo6sifLNd",
+    "fitness":    "https://chat.whatsapp.com/LxjPpTySPSK2MbpHGkZ6CC",
+}
 
 # ----------------------------------------------------------------------
 # EXTRAÇÃO DE TEXTO
@@ -459,6 +466,7 @@ async def revalidar_precos(context: ContextTypes.DEFAULT_TYPE):
     removidas_desconto = []
     conferidas = 0
     nao_conferidas = 0
+    precos_lidos = []
     mudou = False
 
     for oferta in ofertas:
@@ -471,6 +479,7 @@ async def revalidar_precos(context: ContextTypes.DEFAULT_TYPE):
             continue
 
         conferidas += 1
+        precos_lidos.append((oferta, preco_real))
 
         # Subiu mais que a tolerância (20% abaixo de R$ 50, 10% a partir de R$ 50): sai do site
         if preco_real > preco_listado * (1 + tolerancia_exigida(preco_listado)):
@@ -532,6 +541,8 @@ async def revalidar_precos(context: ContextTypes.DEFAULT_TYPE):
             log.error("Falha ao salvar ofertas.json após revalidação: %s", e)
     else:
         log.info("Revalidação concluída, nenhuma mudança de preço.")
+
+    registrar_historico(precos_lidos)
 
 
 # ----------------------------------------------------------------------
@@ -673,7 +684,7 @@ async def nova_mensagem(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "link": oferta["link"],
         "imagem": imagem_url,
         "cta_texto": CTA_TEXTO,
-        "link_grupo": LINK_GRUPO_WHATSAPP,
+        "link_grupo": LINK_GRUPO_POR_NICHO.get(nicho, LINK_GRUPO_WHATSAPP),
         "capturado_em": datetime.now(timezone.utc).isoformat(),
     }
 
@@ -696,6 +707,375 @@ async def nova_mensagem(update: Update, context: ContextTypes.DEFAULT_TYPE):
         log.error("Falha ao salvar ofertas.json no GitHub: %s", e)
 
 
+# ----------------------------------------------------------------------
+# HISTÓRICO DE PREÇOS (base para os selos de "menor preço" na Black Friday)
+# ----------------------------------------------------------------------
+# A cada conferência, guarda o preço lido de cada produto em
+# historico_precos.json (fora da pasta bot/, então gravar não reinicia o robô).
+# Um registro por produto por dia (o mais recente do dia), até 120 dias.
+
+ARQUIVO_HISTORICO = "historico_precos.json"
+ARQUIVO_PAINEL = "painel.json"
+ARQUIVO_ACHADOS = "achados.json"
+DIAS_HISTORICO = 120
+FUSO_BR = timezone(timedelta(hours=-3))
+
+
+def _api_arquivo(caminho):
+    return f"https://api.github.com/repos/{GITHUB_REPO}/contents/{caminho}"
+
+
+def carregar_json_github(caminho, padrao):
+    resp = requests.get(_api_arquivo(caminho), headers=github_headers(), params={"ref": GITHUB_BRANCH})
+    if resp.status_code == 404:
+        return padrao, None
+    resp.raise_for_status()
+    payload = resp.json()
+    return json.loads(base64.b64decode(payload["content"]).decode("utf-8")), payload["sha"]
+
+
+def salvar_json_github(caminho, dados, sha, mensagem):
+    body = {
+        "message": mensagem,
+        "content": base64.b64encode(json.dumps(dados, ensure_ascii=False, indent=1).encode("utf-8")).decode("utf-8"),
+        "branch": GITHUB_BRANCH,
+    }
+    if sha:
+        body["sha"] = sha
+    resp = requests.put(_api_arquivo(caminho), headers=github_headers(), json=body)
+    resp.raise_for_status()
+
+
+def registrar_historico(precos_lidos):
+    """precos_lidos: lista de (oferta, preco_real). Nunca interrompe a conferência."""
+    if not precos_lidos:
+        return
+    hoje = datetime.now(FUSO_BR).strftime("%Y-%m-%d")
+    limite = (datetime.now(FUSO_BR) - timedelta(days=DIAS_HISTORICO)).strftime("%Y-%m-%d")
+    for tentativa in range(2):
+        try:
+            historico, sha = carregar_json_github(ARQUIVO_HISTORICO, {})
+            for oferta, preco in precos_lidos:
+                chave = _chave_produto(oferta)
+                if not chave:
+                    continue
+                item = historico.setdefault(chave, {"nome": oferta.get("nome", "").split(" — ")[0], "precos": []})
+                item["categoria"] = oferta.get("categoria") or "pet"
+                precos = [p for p in item["precos"] if p[0] >= limite and p[0] != hoje]
+                precos.append([hoje, round(float(preco), 2)])
+                item["precos"] = precos
+            salvar_json_github(ARQUIVO_HISTORICO, historico, sha, "Atualiza histórico de preços (robô Rei de Copas)")
+            log.info("Histórico de preços atualizado (%s produtos lidos).", len(precos_lidos))
+            return
+        except requests.HTTPError as e:
+            if tentativa == 0 and e.response is not None and e.response.status_code == 409:
+                continue  # alguém gravou no meio do caminho: lê de novo e tenta mais uma vez
+            log.warning("Não consegui salvar o histórico de preços: %s", e)
+            return
+        except Exception as e:
+            log.warning("Não consegui salvar o histórico de preços: %s", e)
+            return
+
+
+# ----------------------------------------------------------------------
+# ACHADO DO REI — imagem de story diária, uma por nicho, enviada ao painel
+# ----------------------------------------------------------------------
+
+ACHADO_HORARIOS = {          # horário de Brasília em que cada nicho é enviado ao painel
+    "fitness": (7, 0),       # os 4 chegam juntos às 7h para agendar os stories do dia
+    "pet": (7, 1),
+    "casa": (7, 2),
+    "tecnologia": (7, 3),
+}
+ACHADO_DIAS_SEM_REPETIR = 5  # o mesmo produto não volta a ser Achado antes disso
+SITE = "https://reidecopaspromo.com.br"
+PAGINA_DO_NICHO = {
+    "pet": f"{SITE}/pet-promo-site.html",
+    "tecnologia": f"{SITE}/tecnologia-promo-site.html",
+    "casa": f"{SITE}/casa-promo-site.html",
+    "fitness": f"{SITE}/fitness-promo-site.html",
+}
+TEMA_ACHADO = {
+    # fundo, fundo2 (brilho), acento, creme, cor do texto em cima do acento
+    "pet":        dict(nome="Pet",        fundo=(8, 42, 30),  fundo2=(11, 79, 60),  acento=(214, 168, 79), creme=(244, 241, 232), sobre_acento=(6, 61, 47)),
+    "tecnologia": dict(nome="Tecnologia", fundo=(20, 27, 74), fundo2=(30, 42, 110), acento=(0, 194, 255),  creme=(238, 241, 251), sobre_acento=(20, 27, 74)),
+    "casa":       dict(nome="Casa",       fundo=(62, 36, 21), fundo2=(104, 62, 34), acento=(193, 80, 46),  creme=(245, 237, 225), sobre_acento=(245, 237, 225)),
+    "fitness":    dict(nome="Fitness",    fundo=(16, 20, 12), fundo2=(34, 46, 24),  acento=(198, 255, 0),  creme=(241, 243, 237), sobre_acento=(16, 20, 12)),
+}
+VERDE_MARCA = (6, 61, 47)
+FONTES_URL = "https://raw.githubusercontent.com/JulietaUla/Montserrat/master/fonts/ttf/Montserrat-{}.ttf"
+_cache_fontes = {}
+_cache_logo = {}
+
+
+def _fonte(peso, tamanho):
+    from PIL import ImageFont
+    chave = (peso, tamanho)
+    if chave in _cache_fontes:
+        return _cache_fontes[chave]
+    caminho = f"/tmp/rei_fontes/Montserrat-{peso}.ttf"
+    try:
+        if not os.path.exists(caminho):
+            os.makedirs("/tmp/rei_fontes", exist_ok=True)
+            r = requests.get(FONTES_URL.format(peso), timeout=20)
+            r.raise_for_status()
+            with open(caminho, "wb") as f:
+                f.write(r.content)
+        fonte = ImageFont.truetype(caminho, tamanho)
+    except Exception as e:
+        log.warning("Fonte Montserrat-%s indisponível (%s), usando a padrão.", peso, e)
+        try:
+            fonte = ImageFont.load_default(size=tamanho)
+        except TypeError:
+            fonte = ImageFont.load_default()
+    _cache_fontes[chave] = fonte
+    return fonte
+
+
+def _logo():
+    """Pega a logo do próprio site (fica na página Pet). Se não der, a imagem sai com o nome em texto."""
+    if "img" in _cache_logo:
+        return _cache_logo["img"]
+    img = None
+    try:
+        pagina = requests.get(PAGINA_DO_NICHO["pet"], timeout=30).text
+        m = re.search(r'class="logo-horizontal"[^>]*src="data:image/\w+;base64,([^"]+)"', pagina) or \
+            re.search(r'<a[^>]*class="rh-logo"[^>]*>\s*<img src="data:image/\w+;base64,([^"]+)"', pagina)
+        if m:
+            img = Image.open(io.BytesIO(base64.b64decode(m.group(1)))).convert("RGBA")
+    except Exception as e:
+        log.warning("Não consegui pegar a logo no site: %s", e)
+    _cache_logo["img"] = img
+    return img
+
+
+def _reais(v):
+    return "R$ " + f"{v:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+
+
+def _quebrar(d, texto, fonte, largura, max_linhas):
+    linhas, atual = [], ""
+    for p in texto.split():
+        teste = (atual + " " + p).strip()
+        if d.textlength(teste, font=fonte) <= largura or not atual:
+            atual = teste
+        else:
+            linhas.append(atual)
+            atual = p
+    linhas.append(atual)
+    if len(linhas) > max_linhas:
+        linhas = linhas[:max_linhas]
+        while " " in linhas[-1] and d.textlength(linhas[-1] + "…", font=fonte) > largura:
+            linhas[-1] = linhas[-1].rsplit(" ", 1)[0]
+        linhas[-1] += "…"
+    return linhas
+
+
+def gerar_imagem_achado(oferta):
+    """Monta o story 1080x1920 do Achado do Rei e devolve os bytes do JPG."""
+    from PIL import ImageFilter
+    W, H = 1080, 1920
+    nicho = oferta.get("categoria") or "pet"
+    t = TEMA_ACHADO.get(nicho, TEMA_ACHADO["pet"])
+
+    def centro(d, y, txt, fonte, cor):
+        d.text(((W - d.textlength(txt, font=fonte)) / 2, y), txt, font=fonte, fill=cor)
+
+    img = Image.new("RGB", (W, H), t["fundo"])
+    brilho = Image.new("L", (W // 4, H // 4), 0)
+    ImageDraw.Draw(brilho).ellipse([30, 110, 240, 330], fill=255)
+    brilho = brilho.filter(ImageFilter.GaussianBlur(40)).resize((W, H), Image.BILINEAR)
+    img.paste(Image.new("RGB", (W, H), t["fundo2"]), (0, 0), brilho)
+    d = ImageDraw.Draw(img)
+
+    # faixa verde da marca com a logo
+    d.rectangle([0, 0, W, 190], fill=VERDE_MARCA)
+    logo = _logo()
+    if logo is not None:
+        lg = logo.copy()
+        lg.thumbnail((420, 130))
+        img.paste(lg, ((W - lg.width) // 2, (190 - lg.height) // 2), lg)
+    else:
+        centro(d, 62, "REI DE COPAS PROMO", _fonte("ExtraBold", 54), (214, 168, 79))
+
+    # título com coroa
+    s, cx, cy = 30, W // 2, 266
+    pts = [(-1, .35), (-1, -.45), (-.5, -.05), (0, -.7), (.5, -.05), (1, -.45), (1, .35)]
+    d.polygon([(cx + x * s, cy + y * s) for x, y in pts], fill=t["acento"])
+    d.rounded_rectangle([cx - s, cy + .45 * s, cx + s, cy + .62 * s], radius=4, fill=t["acento"])
+    centro(d, 300, "ACHADO DO REI", _fonte("Black", 70), t["creme"])
+    centro(d, 392, f"O melhor de {t['nome']} hoje", _fonte("SemiBold", 34), t["acento"])
+
+    # foto do produto (já vem com a moldura do nicho, feita pelo robô)
+    lado = 680
+    x0, y0 = (W - lado) // 2, 470
+    foto = Image.open(io.BytesIO(requests.get(oferta["imagem"], timeout=20).content)).convert("RGB")
+    sombra = Image.new("L", (W, H), 0)
+    ImageDraw.Draw(sombra).rounded_rectangle([x0 + 10, y0 + 24, x0 + lado + 10, y0 + lado + 24], 40, fill=150)
+    img.paste((0, 0, 0), (0, 0), sombra.filter(ImageFilter.GaussianBlur(28)))
+    mascara = Image.new("L", (lado, lado), 0)
+    ImageDraw.Draw(mascara).rounded_rectangle([0, 0, lado, lado], 40, fill=255)
+    img.paste(foto.resize((lado, lado), Image.LANCZOS), (x0, y0), mascara)
+    d = ImageDraw.Draw(img)
+
+    # selo de desconto
+    if oferta.get("desconto"):
+        cx, cy, r = x0 + lado - 24, y0 + 80, 100
+        d.ellipse([cx - r, cy - r, cx + r, cy + r], fill=t["acento"], outline=t["creme"], width=6)
+        f = _fonte("Black", 58)
+        txt = f"-{oferta['desconto']}%"
+        d.text((cx - d.textlength(txt, font=f) / 2, cy - 46), txt, font=f, fill=t["sobre_acento"])
+        f = _fonte("Bold", 26)
+        d.text((cx - d.textlength("OFF", font=f) / 2, cy + 26), "OFF", font=f, fill=t["sobre_acento"])
+
+    # nome
+    f = _fonte("Bold", 44)
+    y = y0 + lado + 46
+    for linha in _quebrar(d, oferta.get("nome", "").split(" — ")[0].strip(), f, 900, 2):
+        centro(d, y, linha, f, t["creme"])
+        y += 58
+
+    # preços
+    y += 28
+    cinza = tuple(int(c * .75) for c in t["creme"])
+    if oferta.get("preco_original"):
+        f = _fonte("Medium", 38)
+        de = "De " + _reais(oferta["preco_original"])
+        wd = d.textlength(de, font=f)
+        xd = (W - wd) / 2
+        d.text((xd, y), de, font=f, fill=cinza)
+        d.line([xd, y + 26, xd + wd, y + 26], fill=cinza, width=3)
+        y += 58
+    f1, f2 = _fonte("Bold", 44), _fonte("Black", 104)
+    a, b = "por ", _reais(oferta["preco_atual"])
+    wa, wb = d.textlength(a, font=f1), d.textlength(b, font=f2)
+    xs = (W - wa - wb) / 2
+    d.text((xs, y + 50), a, font=f1, fill=t["creme"])
+    d.text((xs + wa, y), b, font=f2, fill=(255, 255, 255))
+    y += 145
+    if oferta.get("preco_original") and oferta["preco_original"] > oferta["preco_atual"]:
+        centro(d, y, "Economia de " + _reais(oferta["preco_original"] - oferta["preco_atual"]), _fonte("SemiBold", 34), t["acento"])
+
+    # chamada
+    y += 74
+    f = _fonte("ExtraBold", 40)
+    txt = "Toque no link"
+    wt = d.textlength(txt, font=f)
+    d.rounded_rectangle([(W - wt) / 2 - 60, y, (W + wt) / 2 + 60, y + 96], 48, fill=t["acento"])
+    d.text(((W - wt) / 2, y + 24), txt, font=f, fill=t["sobre_acento"])
+
+    # rodapé
+    try:
+        cap = datetime.fromisoformat(oferta["capturado_em"]).astimezone(FUSO_BR)
+        quando = f"{cap:%d/%m} às {cap:%Hh%M}"
+    except Exception:
+        quando = datetime.now(FUSO_BR).strftime("%d/%m")
+    f = _fonte("Regular", 25)
+    centro(d, 1800, f"Preço conferido em {quando}. Pode mudar na loja.", f, cinza)
+    centro(d, 1840, "Link de afiliado  |  reidecopaspromo.com.br", f, cinza)
+
+    saida = io.BytesIO()
+    img.save(saida, "JPEG", quality=90)
+    return saida.getvalue()
+
+
+def escolher_achado(nicho, recentes):
+    """Maior desconto do nicho, com foto, que não foi Achado nos últimos dias."""
+    ofertas, _ = carregar_ofertas_atuais()
+    candidatas = [o for o in ofertas if (o.get("categoria") or "pet") == nicho and o.get("imagem") and o.get("preco_atual")]
+    if not candidatas:
+        return None
+    candidatas.sort(key=lambda o: o.get("desconto") or 0, reverse=True)
+    for o in candidatas:
+        if _chave_produto(o) not in recentes:
+            return o
+    return candidatas[0]
+
+
+async def enviar_achado(context, nicho, chat_id=None):
+    """Gera e manda o Achado do Rei de um nicho para o painel."""
+    try:
+        painel, _ = carregar_json_github(ARQUIVO_PAINEL, {})
+        chat_id = chat_id or painel.get("chat_id")
+        if not chat_id:
+            log.info("Achado do Rei (%s): painel ainda não conectado (mande /painel no canal).", nicho)
+            return
+        achados, sha = carregar_json_github(ARQUIVO_ACHADOS, {})
+        limite = (datetime.now(FUSO_BR) - timedelta(days=ACHADO_DIAS_SEM_REPETIR)).strftime("%Y-%m-%d")
+        recentes = {c for c, dia in achados.get(nicho, {}).items() if dia >= limite}
+        oferta = escolher_achado(nicho, recentes)
+        if not oferta:
+            await context.bot.send_message(chat_id, f"👑 Achado do Rei ({TEMA_ACHADO[nicho]['nome']}): hoje não há ofertas no site para escolher.")
+            return
+        foto = gerar_imagem_achado(oferta)
+        nome = oferta.get("nome", "").split(" — ")[0].strip()
+        legenda = (
+            f"👑 Achado do Rei | {TEMA_ACHADO[nicho]['nome']}\n"
+            f"{nome}\n"
+            + (f"De {_reais(oferta['preco_original'])} " if oferta.get("preco_original") else "")
+            + f"por {_reais(oferta['preco_atual'])}"
+            + (f" (-{oferta['desconto']}%)" if oferta.get("desconto") else "")
+            + f"\n\n🔗 Adesivo de link do story:\n{PAGINA_DO_NICHO[nicho]}\n\n🛒 Oferta direta:\n{oferta.get('link', '')}"
+        )
+        await context.bot.send_photo(chat_id, photo=foto, caption=legenda[:1024])
+        hoje = datetime.now(FUSO_BR).strftime("%Y-%m-%d")
+        do_nicho = {c: dia for c, dia in achados.get(nicho, {}).items() if dia >= limite}
+        do_nicho[_chave_produto(oferta)] = hoje
+        achados[nicho] = do_nicho
+        salvar_json_github(ARQUIVO_ACHADOS, achados, sha, "Registra Achado do Rei (robô Rei de Copas)")
+        log.info("Achado do Rei (%s) enviado: %s", nicho, nome)
+    except Exception as e:
+        log.error("Falha ao enviar o Achado do Rei (%s): %s", nicho, e)
+
+
+async def achado_agendado(context: ContextTypes.DEFAULT_TYPE):
+    await enviar_achado(context, context.job.data)
+
+
+# ----------------------------------------------------------------------
+# PAINEL — canal privado do Telegram onde chegam os Achados
+# ----------------------------------------------------------------------
+# No canal: /painel conecta (só funciona se ainda não houver painel conectado)
+#           /achado casa  -> gera o Achado do Rei de Casa na hora (teste)
+
+async def comando_painel(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    msg = update.effective_message
+    if not msg or not msg.text:
+        return
+    texto = msg.text.strip().lower()
+    chat_id = msg.chat_id
+    try:
+        painel, sha = carregar_json_github(ARQUIVO_PAINEL, {})
+    except Exception as e:
+        log.error("Falha ao ler painel.json: %s", e)
+        return
+
+    if texto.startswith("/painel"):
+        if painel.get("chat_id") and painel["chat_id"] != chat_id:
+            log.warning("Pedido de /painel ignorado: já existe um painel conectado (%s).", painel["chat_id"])
+            return
+        salvar_json_github(ARQUIVO_PAINEL, {"chat_id": chat_id, "conectado_em": datetime.now(FUSO_BR).isoformat()},
+                           sha, "Conecta painel do Telegram (robô Rei de Copas)")
+        horarios = "\n".join(f"• {TEMA_ACHADO[n]['nome']}: {h:02d}h{m:02d}" for n, (h, m) in ACHADO_HORARIOS.items())
+        await context.bot.send_message(
+            chat_id,
+            "✅ Painel do Rei conectado!\n\nO Achado do Rei chega aqui todo dia:\n" + horarios +
+            "\n\nPara testar agora, mande: /achado casa (ou pet, tecnologia, fitness)",
+        )
+        log.info("Painel conectado: %s", chat_id)
+        return
+
+    if texto.startswith("/achado"):
+        if painel.get("chat_id") != chat_id:
+            return  # só responde no painel conectado
+        partes = texto.split()
+        nicho = partes[1] if len(partes) > 1 else ""
+        if nicho not in TEMA_ACHADO:
+            await context.bot.send_message(chat_id, "Use: /achado pet, /achado tecnologia, /achado casa ou /achado fitness")
+            return
+        await enviar_achado(context, nicho, chat_id)
+
+
 def main():
     if not TELEGRAM_BOT_TOKEN:
         raise SystemExit("Defina a variável de ambiente TELEGRAM_BOT_TOKEN antes de iniciar.")
@@ -704,6 +1084,10 @@ def main():
 
     app = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()
     app.add_handler(MessageHandler((filters.TEXT | filters.CAPTION) & (~filters.COMMAND), nova_mensagem))
+    app.add_handler(MessageHandler(
+        (filters.UpdateType.MESSAGE | filters.UpdateType.CHANNEL_POST) & filters.Regex(r"(?i)^/(painel|achado)\b"),
+        comando_painel,
+    ))
 
     intervalo_segundos = CRITERIOS["intervalo_revalidacao_horas"] * 60 * 60
     app.job_queue.run_repeating(
@@ -712,6 +1096,10 @@ def main():
         first=10 * 60,  # espera 10 min após o robô subir antes da primeira checagem
         name="revalidar_precos",
     )
+
+    for nicho, (hora, minuto) in ACHADO_HORARIOS.items():
+        app.job_queue.run_daily(achado_agendado, time=dtime(hora, minuto, tzinfo=FUSO_BR),
+                                data=nicho, name=f"achado_{nicho}")
 
     for nicho, canal in CANAIS_POR_NICHO.items():
         log.info("Canal %-10s -> %s", nicho, canal)
