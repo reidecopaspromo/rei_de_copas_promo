@@ -124,7 +124,7 @@
   "precos": [
    [
     "2026-10-13",
-    341.99
+    342.81
    ]
   ],
   "categoria": "tecnologia"
@@ -254,7 +254,7 @@
   "precos": [
    [
     "2026-10-13",
-    1796.0
+    1926.0
    ]
   ],
   "categoria": "tecnologia"
@@ -314,7 +314,7 @@
   "precos": [
    [
     "2026-10-13",
-    2199.0
+    2499.0
    ]
   ],
   "categoria": "tecnologia"
@@ -344,7 +344,7 @@
   "precos": [
    [
     "2026-10-13",
-    1779.0
+    1835.0
    ]
   ],
   "categoria": "casa"
@@ -608,5 +608,275 @@
    ]
   ],
   "categoria": "fitness"
+ },
+ "guia para cachorro 20 metros adestramento passeio para cães! cor preto": {
+  "nome": "Guia Para Cachorro 20 Metros Adestramento Passeio Para Cães! Cor Preto",
+  "precos": [
+   [
+    "2026-10-13",
+    74.79
+   ]
+  ],
+  "categoria": "pet"
+ },
+ "arranhador gato 3 plataforma grande brinquedo playground": {
+  "nome": "Arranhador Gato 3 Plataforma Grande Brinquedo Playground",
+  "precos": [
+   [
+    "2026-10-13",
+    117.86
+   ]
+  ],
+  "categoria": "pet"
+ },
+ "premierpet nutrição clínica diabetes cão ração seca 10,1kg": {
+  "nome": "PremieRpet Nutrição Clínica Diabetes Cão Ração Seca 10,1kg",
+  "precos": [
+   [
+    "2026-10-13",
+    284.9
+   ]
+  ],
+  "categoria": "pet"
+ },
+ "ração vet life natural feline gastro intestinal 2kg": {
+  "nome": "Ração Vet Life Natural Feline Gastro Intestinal 2kg",
+  "precos": [
+   [
+    "2026-10-13",
+    128.99
+   ]
+  ],
+  "categoria": "pet"
+ },
+ "fórmula natural super premium pro cão sênior portes mini e pequeno sabor frango e batata-doce 10,1 kg": {
+  "nome": "Fórmula Natural Super Premium Pro Cão Sênior Portes Mini e Pequeno Sabor Frango e Batata-Doce 10,1 kg",
+  "precos": [
+   [
+    "2026-10-13",
+    152.5
+   ]
+  ],
+  "categoria": "pet"
+ },
+ "golden premium especial golden gatos adultos castrados salmão seca 10kg": {
+  "nome": "Golden Premium Especial Golden Gatos Adultos Castrados Salmão Seca 10kg",
+  "precos": [
+   [
+    "2026-10-13",
+    137.78
+   ]
+  ],
+  "categoria": "pet"
+ },
+ "ração gran plus menu cão adulto médio e grande carne arroz 15kg": {
+  "nome": "Ração Gran Plus Menu Cão Adulto Médio e Grande Carne Arroz 15kg",
+  "precos": [
+   [
+    "2026-10-13",
+    141.01
+   ]
+  ],
+  "categoria": "pet"
+ },
+ "zoetis simparic 80mg antipulgas carrapatos cães 20-40kg 1 comprimido": {
+  "nome": "Zoetis Simparic 80mg Antipulgas Carrapatos Cães 20-40kg 1 Comprimido",
+  "precos": [
+   [
+    "2026-10-13",
+    77.93
+   ]
+  ],
+  "categoria": "pet"
+ },
+ "tapete higiênico para cães gatos pets manta absorvente 50 unidades 50x60cm branco fralda pet cachorro camadas de proteção bloqueador de odor linha premium com camadas de proteção": {
+  "nome": "Tapete Higiênico Para Cães Gatos Pets Manta Absorvente 50 Unidades 50x60Cm Branco Fralda Pet Cachorro Camadas De Proteção Bloqueador De Odor Linha Premium Com Camadas De Proteção",
+  "precos": [
+   [
+    "2026-10-13",
+    47.9
+   ]
+  ],
+  "categoria": "pet"
+ },
+ "ração whey protein grannature xtreme alta performance 30% proteína para cães adultos raças médio e grande porte alimento seco sabor frango super premium com bcaa sem corantes saúde articular 15kg": {
+  "nome": "Ração Whey Protein Grannature Xtreme Alta Performance 30% Proteína para Cães Adultos raças Médio E Grande Porte Alimento Seco Sabor Frango Super Premium Com Bcaa Sem Corantes Saúde Articular 15kg",
+  "precos": [
+   [
+    "2026-10-13",
+    177.3
+   ]
+  ],
+  "categoria": "pet"
+ },
+ "alimento gran plus gourmet para gato adulto castrado sabor salmão e frango de 10.1 kg": {
+  "nome": "Alimento Gran Plus Gourmet para gato adulto Castrado sabor salmão e frango de 10.1 kg",
+  "precos": [
+   [
+    "2026-10-13",
+    162.69
+   ]
+  ],
+  "categoria": "pet"
+ },
+ "comedouro automático new pet 4l com gravação de voz para cães e gatos": {
+  "nome": "Comedouro Automático New Pet 4L com Gravação de Voz para Cães e Gatos",
+  "precos": [
+   [
+    "2026-10-13",
+    186.83
+   ]
+  ],
+  "categoria": "pet"
+ },
+ "premier nutrição clínica hipoalérgico mandioca cães adulto e filhote porte pequeno anti alérgica": {
+  "nome": "Premier Nutrição Clínica Hipoalérgico Mandioca Cães Adulto e Filhote Porte Pequeno Anti Alérgica",
+  "precos": [
+   [
+    "2026-10-13",
+    313.19
+   ]
+  ],
+  "categoria": "pet"
+ },
+ "tênis nike revolution 8 masculino": {
+  "nome": "Tênis Nike Revolution 8 Masculino",
+  "precos": [
+   [
+    "2026-10-13",
+    299.99
+   ]
+  ],
+  "categoria": "fitness"
+ },
+ "gran plus menu castrados para gato adulto sabor salmão y arroz de 10.1 kg": {
+  "nome": "Gran Plus Menu Castrados Para Gato Adulto Sabor Salmão Y Arroz De 10.1 Kg",
+  "precos": [
+   [
+    "2026-10-13",
+    144.63
+   ]
+  ],
+  "categoria": "pet"
+ },
+ "refil whey 100% pure pounch 900g integralmedica sabor cookies and cream": {
+  "nome": "Refil Whey 100% Pure Pounch 900g Integralmedica Sabor Cookies And Cream",
+  "precos": [
+   [
+    "2026-10-13",
+    140.63
+   ]
+  ],
+  "categoria": "fitness"
+ },
+ "top puma original feminino alta sustentação academia fitness": {
+  "nome": "Top Puma Original Feminino Alta Sustentação Academia Fitness",
+  "precos": [
+   [
+    "2026-10-13",
+    39.99
+   ]
+  ],
+  "categoria": "fitness"
+ },
+ "creatina monohidratada 300g soufit- sabor pink lemonade pink lemonade": {
+  "nome": "Creatina Monohidratada 300g Soufit- Sabor Pink Lemonade Pink Lemonade",
+  "precos": [
+   [
+    "2026-10-13",
+    84.0
+   ]
+  ],
+  "categoria": "fitness"
+ },
+ "tênis kappa park 2.0 original unissex caminhada academia": {
+  "nome": "Tênis Kappa Park 2.0 Original Unissex Caminhada Academia",
+  "precos": [
+   [
+    "2026-10-13",
+    85.49
+   ]
+  ],
+  "categoria": "fitness"
+ },
+ "bebedouro fonte automático cães gatos com sensor e sem fio cor branco": {
+  "nome": "Bebedouro Fonte Automático Cães Gatos Com Sensor E Sem Fio Cor Branco",
+  "precos": [
+   [
+    "2026-10-13",
+    113.9
+   ]
+  ],
+  "categoria": "pet"
+ },
+ "testo essencial - fórmula exclusiva com feno grego + boro + arginina + zma + vitamina b6 - 60 cápsulas": {
+  "nome": "TESTO ESSENCIAL - Fórmula Exclusiva com Feno Grego + Boro + Arginina + ZMA + Vitamina B6 - 60 cápsulas",
+  "precos": [
+   [
+    "2026-10-13",
+    56.77
+   ]
+  ],
+  "categoria": "fitness"
+ },
+ "nutrisco petisco úmido cremoso para gatos kit com 6 pacotes": {
+  "nome": "Nutrisco Petisco Úmido Cremoso Para Gatos Kit Com 6 Pacotes",
+  "precos": [
+   [
+    "2026-10-13",
+    69.0
+   ]
+  ],
+  "categoria": "pet"
+ },
+ "whiskas sachê carne ao molho para gatos adultos kit 20 unidades de 85 g": {
+  "nome": "Whiskas Sachê Carne ao Molho para Gatos Adultos KIT 20 unidades de 85 g",
+  "precos": [
+   [
+    "2026-10-13",
+    49.98
+   ]
+  ],
+  "categoria": "pet"
+ },
+ "tapete higiênico pet 30 unidades 90x60 descartável cão gato": {
+  "nome": "Tapete Higiênico Pet 30 Unidades 90x60 Descartável Cão Gato",
+  "precos": [
+   [
+    "2026-10-13",
+    55.9
+   ]
+  ],
+  "categoria": "pet"
+ },
+ "proteína max titanium whey pro concetrado em pó sabor baunilha x 1kg": {
+  "nome": "Proteína Max Titanium Whey Pro Concetrado em pó sabor Baunilha x 1kg",
+  "precos": [
+   [
+    "2026-10-13",
+    78.99
+   ]
+  ],
+  "categoria": "fitness"
+ },
+ "fórmula natural fresh meat sensitive cães adultos mini e pequeno portes sabor cordeiro 2,5kg": {
+  "nome": "Fórmula Natural Fresh Meat Sensitive Cães Adultos Mini e Pequeno Portes Sabor Cordeiro 2,5kg",
+  "precos": [
+   [
+    "2026-10-13",
+    112.0
+   ]
+  ],
+  "categoria": "pet"
+ },
+ "simparic 20mg antipulgas cães 5 a 10kg 3 comprimidos zoetis": {
+  "nome": "Simparic 20mg Antipulgas Cães 5 a 10kg 3 Comprimidos Zoetis",
+  "precos": [
+   [
+    "2026-10-13",
+    104.5
+   ]
+  ],
+  "categoria": "pet"
  }
 }
