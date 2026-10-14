@@ -102,7 +102,7 @@
    ],
    [
     "2026-10-14",
-    1251.0
+    1177.0
    ]
   ],
   "categoria": "tecnologia"
@@ -270,7 +270,7 @@
    ],
    [
     "2026-10-14",
-    72.59
+    78.9
    ]
   ],
   "categoria": "tecnologia"
@@ -284,7 +284,7 @@
    ],
    [
     "2026-10-14",
-    38.99
+    37.38
    ]
   ],
   "categoria": "casa"
@@ -382,7 +382,7 @@
    ],
    [
     "2026-10-14",
-    979.0
+    899.99
    ]
   ],
   "categoria": "tecnologia"
@@ -424,7 +424,7 @@
    ],
    [
     "2026-10-14",
-    509.91
+    511.0
    ]
   ],
   "categoria": "casa"
@@ -858,7 +858,7 @@
    ],
    [
     "2026-10-14",
-    274.55
+    275.91
    ]
   ],
   "categoria": "pet"
@@ -886,7 +886,7 @@
    ],
    [
     "2026-10-14",
-    152.5
+    143.0
    ]
   ],
   "categoria": "pet"
@@ -1012,7 +1012,7 @@
    ],
    [
     "2026-10-14",
-    315.78
+    299.99
    ]
   ],
   "categoria": "fitness"
@@ -1082,7 +1082,7 @@
    ],
    [
     "2026-10-14",
-    80.4
+    85.49
    ]
   ],
   "categoria": "fitness"
@@ -1232,5 +1232,15 @@
    ]
   ],
   "categoria": "casa"
+ },
+ "fone videogame console de mao retro x9 portatil jogos branco": {
+  "nome": "Fone Videogame Console De Mao Retro X9 Portatil Jogos Branco",
+  "precos": [
+   [
+    "2026-10-14",
+    245.9
+   ]
+  ],
+  "categoria": "tecnologia"
  }
 }
