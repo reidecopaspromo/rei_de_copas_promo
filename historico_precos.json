@@ -124,7 +124,7 @@
   "precos": [
    [
     "2026-10-13",
-    342.81
+    341.99
    ]
   ],
   "categoria": "tecnologia"
@@ -634,7 +634,7 @@
   "precos": [
    [
     "2026-10-13",
-    284.9
+    275.4
    ]
   ],
   "categoria": "pet"
@@ -834,7 +834,7 @@
   "precos": [
    [
     "2026-10-13",
-    49.98
+    44.0
    ]
   ],
   "categoria": "pet"
@@ -878,5 +878,35 @@
    ]
   ],
   "categoria": "pet"
+ },
+ "porta ração pote com tampa pet gato cachorro dispenser 2l transparente": {
+  "nome": "Porta Ração Pote Com Tampa Pet Gato Cachorro Dispenser 2l Transparente",
+  "precos": [
+   [
+    "2026-10-13",
+    25.61
+   ]
+  ],
+  "categoria": "pet"
+ },
+ "coleira suporte para airtag apple pet animal gato": {
+  "nome": "Coleira Suporte Para Airtag Apple Pet Animal Gato",
+  "precos": [
+   [
+    "2026-10-13",
+    24.0
+   ]
+  ],
+  "categoria": "pet"
+ },
+ "multiprocessador elétrico 2l 400w inox triturador moedor picador de alimentos para carne legumes alho temperos cozinha hardline": {
+  "nome": "Multiprocessador Elétrico 2L 400W Inox Triturador Moedor Picador de Alimentos para Carne Legumes Alho Temperos Cozinha Hardline",
+  "precos": [
+   [
+    "2026-10-13",
+    70.42
+   ]
+  ],
+  "categoria": "casa"
  }
 }
