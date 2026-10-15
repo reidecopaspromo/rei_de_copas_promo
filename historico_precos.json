@@ -1142,7 +1142,7 @@
    ],
    [
     "2026-10-15",
-    43.9
+    42.9
    ]
   ],
   "categoria": "pet"
@@ -1502,5 +1502,15 @@
    ]
   ],
   "categoria": "tecnologia"
+ },
+ "alimentador inteligente comedouro automático pet app newpet np1322 preto": {
+  "nome": "Alimentador Inteligente Comedouro Automático Pet App Newpet NP1322 Preto",
+  "precos": [
+   [
+    "2026-10-15",
+    189.95
+   ]
+  ],
+  "categoria": "pet"
  }
 }
