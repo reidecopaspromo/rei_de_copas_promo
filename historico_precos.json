@@ -161,6 +161,10 @@
    [
     "2026-10-15",
     111.9
+   ],
+   [
+    "2026-10-16",
+    109.55
    ]
   ],
   "categoria": "casa"
@@ -178,6 +182,10 @@
    ],
    [
     "2026-10-15",
+    93.91
+   ],
+   [
+    "2026-10-16",
     93.91
    ]
   ],
@@ -215,6 +223,10 @@
    [
     "2026-10-15",
     158.0
+   ],
+   [
+    "2026-10-16",
+    158.0
    ]
   ],
   "categoria": "casa"
@@ -250,6 +262,10 @@
    ],
    [
     "2026-10-15",
+    199.0
+   ],
+   [
+    "2026-10-16",
     199.0
    ]
   ],
@@ -291,6 +307,10 @@
    [
     "2026-10-15",
     59.0
+   ],
+   [
+    "2026-10-16",
+    59.99
    ]
   ],
   "categoria": "casa"
@@ -308,6 +328,10 @@
    ],
    [
     "2026-10-15",
+    137.56
+   ],
+   [
+    "2026-10-16",
     137.56
    ]
   ],
@@ -349,6 +373,10 @@
    [
     "2026-10-15",
     1759.0
+   ],
+   [
+    "2026-10-16",
+    1759.0
    ]
   ],
   "categoria": "casa"
@@ -388,6 +416,10 @@
    ],
    [
     "2026-10-15",
+    36.99
+   ],
+   [
+    "2026-10-16",
     36.99
    ]
   ],
@@ -429,6 +461,10 @@
    [
     "2026-10-15",
     161.99
+   ],
+   [
+    "2026-10-16",
+    161.99
    ]
   ],
   "categoria": "casa"
@@ -465,6 +501,10 @@
    [
     "2026-10-14",
     31.89
+   ],
+   [
+    "2026-10-16",
+    28.9
    ]
   ],
   "categoria": "casa"
@@ -501,6 +541,10 @@
    [
     "2026-10-14",
     129.99
+   ],
+   [
+    "2026-10-16",
+    78.98
    ]
   ],
   "categoria": "casa"
@@ -537,6 +581,10 @@
    [
     "2026-10-14",
     366.56
+   ],
+   [
+    "2026-10-16",
+    329.9
    ]
   ],
   "categoria": "casa"
@@ -577,6 +625,10 @@
    [
     "2026-10-15",
     589.96
+   ],
+   [
+    "2026-10-16",
+    505.91
    ]
   ],
   "categoria": "casa"
@@ -627,6 +679,10 @@
    [
     "2026-10-14",
     403.66
+   ],
+   [
+    "2026-10-16",
+    357.47
    ]
   ],
   "categoria": "casa"
@@ -645,6 +701,10 @@
    [
     "2026-10-15",
     1724.0
+   ],
+   [
+    "2026-10-16",
+    1769.0
    ]
   ],
   "categoria": "casa"
@@ -677,6 +737,10 @@
    [
     "2026-10-15",
     299.0
+   ],
+   [
+    "2026-10-16",
+    299.0
    ]
   ],
   "categoria": "casa"
@@ -708,6 +772,10 @@
    ],
    [
     "2026-10-15",
+    779.9
+   ],
+   [
+    "2026-10-16",
     779.9
    ]
   ],
@@ -1095,6 +1163,10 @@
    [
     "2026-10-15",
     74.79
+   ],
+   [
+    "2026-10-16",
+    74.79
    ]
   ],
   "categoria": "pet"
@@ -1112,6 +1184,10 @@
    ],
    [
     "2026-10-15",
+    117.86
+   ],
+   [
+    "2026-10-16",
     117.86
    ]
   ],
@@ -1149,6 +1225,10 @@
    [
     "2026-10-15",
     128.99
+   ],
+   [
+    "2026-10-16",
+    128.99
    ]
   ],
   "categoria": "pet"
@@ -1166,6 +1246,10 @@
    ],
    [
     "2026-10-15",
+    152.5
+   ],
+   [
+    "2026-10-16",
     152.5
    ]
   ],
@@ -1199,6 +1283,10 @@
    [
     "2026-10-15",
     141.01
+   ],
+   [
+    "2026-10-16",
+    141.01
    ]
   ],
   "categoria": "pet"
@@ -1231,6 +1319,10 @@
    [
     "2026-10-15",
     42.9
+   ],
+   [
+    "2026-10-16",
+    42.9
    ]
   ],
   "categoria": "pet"
@@ -1249,6 +1341,10 @@
    [
     "2026-10-15",
     181.24
+   ],
+   [
+    "2026-10-16",
+    181.24
    ]
   ],
   "categoria": "pet"
@@ -1266,6 +1362,10 @@
    ],
    [
     "2026-10-15",
+    162.69
+   ],
+   [
+    "2026-10-16",
     162.69
    ]
   ],
@@ -1299,6 +1399,10 @@
    [
     "2026-10-14",
     312.9
+   ],
+   [
+    "2026-10-16",
+    312.9
    ]
   ],
   "categoria": "pet"
@@ -1320,7 +1424,7 @@
    ],
    [
     "2026-10-16",
-    315.78
+    299.99
    ]
   ],
   "categoria": "fitness"
@@ -1335,6 +1439,10 @@
    [
     "2026-10-14",
     186.9
+   ],
+   [
+    "2026-10-16",
+    144.63
    ]
   ],
   "categoria": "pet"
@@ -1429,6 +1537,10 @@
    [
     "2026-10-14",
     119.9
+   ],
+   [
+    "2026-10-16",
+    98.9
    ]
   ],
   "categoria": "pet"
@@ -1469,6 +1581,10 @@
    [
     "2026-10-15",
     78.85
+   ],
+   [
+    "2026-10-16",
+    69.0
    ]
   ],
   "categoria": "pet"
@@ -1486,6 +1602,10 @@
    ],
    [
     "2026-10-15",
+    49.98
+   ],
+   [
+    "2026-10-16",
     49.98
    ]
   ],
@@ -1537,6 +1657,10 @@
    [
     "2026-10-13",
     112.0
+   ],
+   [
+    "2026-10-16",
+    106.4
    ]
   ],
   "categoria": "pet"
@@ -1547,6 +1671,10 @@
    [
     "2026-10-13",
     104.5
+   ],
+   [
+    "2026-10-16",
+    104.1
    ]
   ],
   "categoria": "pet"
@@ -1774,5 +1902,85 @@
    ]
   ],
   "categoria": "tecnologia"
+ },
+ "jogo toalhas banho grossas macias algodão 4pç absorventes": {
+  "nome": "Jogo Toalhas Banho Grossas Macias Algodão 4pç Absorventes",
+  "precos": [
+   [
+    "2026-10-16",
+    80.73
+   ]
+  ],
+  "categoria": "casa"
+ },
+ "escrivaninha industrial 90cm mesa estudo aparador aço mdf": {
+  "nome": "Escrivaninha Industrial 90cm Mesa Estudo Aparador Aço Mdf",
+  "precos": [
+   [
+    "2026-10-16",
+    102.05
+   ]
+  ],
+  "categoria": "casa"
+ },
+ "ração seca fórmula natural fresh meat para cães adultos porte grande e gigante frango, mandioca e alecrim": {
+  "nome": "Ração Seca Fórmula Natural Fresh Meat para Cães Adultos Porte Grande e Gigante Frango, Mandioca e Alecrim",
+  "precos": [
+   [
+    "2026-10-16",
+    361.93
+   ]
+  ],
+  "categoria": "pet"
+ },
+ "árvore de natal 2,10m fácil montagem 1675 galhos articulado verde": {
+  "nome": "Árvore De Natal 2,10m Fácil Montagem 1675 Galhos Articulado Verde",
+  "precos": [
+   [
+    "2026-10-16",
+    275.99
+   ]
+  ],
+  "categoria": "casa"
+ },
+ "tapete higiênico para cachorro 50 unidades 60x55cm com gel absorvente fralda manta pet cão com fitas adesivas anti odor atrativo canino": {
+  "nome": "Tapete Higiênico para Cachorro 50 Unidades 60x55cm com Gel Absorvente Fralda Manta Pet Cão Com Fitas Adesivas Anti Odor Atrativo Canino",
+  "precos": [
+   [
+    "2026-10-16",
+    44.0
+   ]
+  ],
+  "categoria": "pet"
+ },
+ "tapete higiênico pet 50 unidades 60x60 descartável cão gato": {
+  "nome": "Tapete Higiênico Pet 50 Unidades 60x60 Descartável Cão Gato",
+  "precos": [
+   [
+    "2026-10-16",
+    52.9
+   ]
+  ],
+  "categoria": "pet"
+ },
+ "bolsa transporte pet cães gatos viagem avião com almofada 46×30×30cm cinza": {
+  "nome": "Bolsa Transporte Pet Cães Gatos Viagem Avião com Almofada 46×30×30cm Cinza",
+  "precos": [
+   [
+    "2026-10-16",
+    157.42
+   ]
+  ],
+  "categoria": "pet"
+ },
+ "fórmula natural pro cão adulto médio e grande seca 15kg": {
+  "nome": "Fórmula Natural Pro Cão Adulto Médio e Grande Seca 15kg",
+  "precos": [
+   [
+    "2026-10-16",
+    202.16
+   ]
+  ],
+  "categoria": "pet"
  }
 }
