@@ -405,6 +405,10 @@
    [
     "2026-10-16",
     166.5
+   ],
+   [
+    "2026-10-18",
+    175.26
    ]
   ],
   "categoria": "casa"
@@ -565,6 +569,10 @@
    [
     "2026-10-16",
     185.32
+   ],
+   [
+    "2026-10-18",
+    198.93
    ]
   ],
   "categoria": "casa"
@@ -765,6 +773,10 @@
    [
     "2026-10-16",
     589.96
+   ],
+   [
+    "2026-10-18",
+    469.0
    ]
   ],
   "categoria": "casa"
@@ -1447,6 +1459,10 @@
    [
     "2026-10-15",
     389.97
+   ],
+   [
+    "2026-10-18",
+    304.74
    ]
   ],
   "categoria": "pet"
@@ -1472,6 +1488,10 @@
    ],
    [
     "2026-10-17",
+    128.99
+   ],
+   [
+    "2026-10-18",
     128.99
    ]
   ],
@@ -1499,6 +1519,10 @@
    [
     "2026-10-17",
     143.01
+   ],
+   [
+    "2026-10-18",
+    144.87
    ]
   ],
   "categoria": "pet"
@@ -1513,6 +1537,10 @@
    [
     "2026-10-14",
     184.9
+   ],
+   [
+    "2026-10-18",
+    155.7
    ]
   ],
   "categoria": "pet"
@@ -1549,6 +1577,10 @@
    [
     "2026-10-14",
     86.0
+   ],
+   [
+    "2026-10-18",
+    78.29
    ]
   ],
   "categoria": "pet"
@@ -1574,6 +1606,10 @@
    ],
    [
     "2026-10-17",
+    41.31
+   ],
+   [
+    "2026-10-18",
     41.31
    ]
   ],
@@ -1601,6 +1637,10 @@
    [
     "2026-10-17",
     181.24
+   ],
+   [
+    "2026-10-18",
+    197.0
    ]
   ],
   "categoria": "pet"
@@ -1622,6 +1662,10 @@
    ],
    [
     "2026-10-16",
+    187.0
+   ],
+   [
+    "2026-10-18",
     187.0
    ]
   ],
@@ -1666,7 +1710,7 @@
    ],
    [
     "2026-10-18",
-    297.45
+    331.24
    ]
   ],
   "categoria": "pet"
@@ -1752,7 +1796,7 @@
    ],
    [
     "2026-10-18",
-    139.0
+    140.63
    ]
   ],
   "categoria": "fitness"
@@ -1904,7 +1948,7 @@
    ],
    [
     "2026-10-18",
-    69.0
+    69.99
    ]
   ],
   "categoria": "pet"
@@ -2226,7 +2270,7 @@
    ],
    [
     "2026-10-18",
-    179.55
+    189.0
    ]
   ],
   "categoria": "fitness"
@@ -2244,7 +2288,7 @@
    ],
    [
     "2026-10-18",
-    29.92
+    31.5
    ]
   ],
   "categoria": "fitness"
@@ -2415,6 +2459,10 @@
    [
     "2026-10-16",
     275.99
+   ],
+   [
+    "2026-10-18",
+    275.99
    ]
   ],
   "categoria": "casa"
@@ -2516,5 +2564,65 @@
    ]
   ],
   "categoria": "pet"
+ },
+ "taiff black ion secador de cabelo profissional 2000w cor preto": {
+  "nome": "Taiff Black Ion Secador De Cabelo Profissional 2000w Cor Preto",
+  "precos": [
+   [
+    "2026-10-18",
+    222.3
+   ]
+  ],
+  "categoria": "casa"
+ },
+ "kit 10 pote de vidro marmita hermético 640ml freezer fitness rishon": {
+  "nome": "Kit 10 Pote De Vidro Marmita Hermético 640ml Freezer Fitness Rishon",
+  "precos": [
+   [
+    "2026-10-18",
+    97.62
+   ]
+  ],
+  "categoria": "casa"
+ },
+ "aspirador de pó e água wap gtw 10 compacto 1400w 10 litros amarelo": {
+  "nome": "Aspirador De Pó e Água Wap Gtw 10 Compacto 1400w 10 Litros Amarelo",
+  "precos": [
+   [
+    "2026-10-18",
+    229.91
+   ]
+  ],
+  "categoria": "casa"
+ },
+ "liquidificador oster oliq610 1400w full 3,2l cor preto": {
+  "nome": "Liquidificador Oster OLIQ610 1400w Full 3,2L Cor Preto",
+  "precos": [
+   [
+    "2026-10-18",
+    166.0
+   ]
+  ],
+  "categoria": "casa"
+ },
+ "capa protetora colchão box casal padrão matelado impermeável": {
+  "nome": "Capa Protetora Colchão Box Casal Padrão Matelado Impermeável",
+  "precos": [
+   [
+    "2026-10-18",
+    27.59
+   ]
+  ],
+  "categoria": "casa"
+ },
+ "vaso sanitário tubrax monobloco vab0002 caixa acoplada completo privada cor branco": {
+  "nome": "Vaso Sanitário Tubrax Monobloco VAB0002 Caixa Acoplada Completo Privada Cor Branco",
+  "precos": [
+   [
+    "2026-10-18",
+    573.0
+   ]
+  ],
+  "categoria": "casa"
  }
 }
