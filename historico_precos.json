@@ -294,7 +294,7 @@
    ],
    [
     "2026-10-20",
-    93.91
+    99.55
    ]
   ],
   "categoria": "casa"
@@ -362,7 +362,7 @@
    ],
    [
     "2026-10-20",
-    162.43
+    161.0
    ]
   ],
   "categoria": "casa"
@@ -528,7 +528,7 @@
    ],
    [
     "2026-10-20",
-    175.26
+    140.0
    ]
   ],
   "categoria": "casa"
@@ -604,7 +604,7 @@
    ],
    [
     "2026-10-20",
-    1759.0
+    1672.0
    ]
   ],
   "categoria": "casa"
@@ -680,7 +680,7 @@
    ],
    [
     "2026-10-20",
-    36.99
+    30.9
    ]
   ],
   "categoria": "casa"
@@ -926,7 +926,7 @@
    ],
    [
     "2026-10-20",
-    1019.0
+    928.99
    ]
   ],
   "categoria": "tecnologia"
@@ -1186,7 +1186,7 @@
    ],
    [
     "2026-10-20",
-    1069.0
+    962.9
    ]
   ],
   "categoria": "tecnologia"
@@ -1242,6 +1242,10 @@
    ],
    [
     "2026-10-18",
+    799.0
+   ],
+   [
+    "2026-10-20",
     799.0
    ]
   ],
@@ -1299,6 +1303,10 @@
    [
     "2026-10-18",
     215.99
+   ],
+   [
+    "2026-10-20",
+    218.29
    ]
   ],
   "categoria": "tecnologia"
@@ -1343,6 +1351,10 @@
    [
     "2026-10-18",
     489.9
+   ],
+   [
+    "2026-10-20",
+    429.0
    ]
   ],
   "categoria": "tecnologia"
@@ -1867,6 +1879,10 @@
    [
     "2026-10-18",
     349.99
+   ],
+   [
+    "2026-10-20",
+    301.82
    ]
   ],
   "categoria": "pet"
@@ -1939,6 +1955,10 @@
    [
     "2026-10-19",
     164.38
+   ],
+   [
+    "2026-10-20",
+    147.25
    ]
   ],
   "categoria": "pet"
@@ -2043,6 +2063,10 @@
    [
     "2026-10-19",
     47.9
+   ],
+   [
+    "2026-10-20",
+    44.9
    ]
   ],
   "categoria": "pet"
@@ -2077,6 +2101,10 @@
    [
     "2026-10-19",
     197.0
+   ],
+   [
+    "2026-10-20",
+    181.24
    ]
   ],
   "categoria": "pet"
@@ -2150,7 +2178,7 @@
    ],
    [
     "2026-10-20",
-    284.9
+    312.9
    ]
   ],
   "categoria": "pet"
@@ -2334,7 +2362,7 @@
    ],
    [
     "2026-10-20",
-    85.49
+    82.65
    ]
   ],
   "categoria": "fitness"
@@ -2364,7 +2392,7 @@
    ],
    [
     "2026-10-20",
-    93.95
+    119.9
    ]
   ],
   "categoria": "pet"
@@ -2712,7 +2740,7 @@
    ],
    [
     "2026-10-20",
-    199.95
+    189.95
    ]
   ],
   "categoria": "pet"
@@ -3022,7 +3050,7 @@
    ],
    [
     "2026-10-20",
-    32.03
+    34.82
    ]
   ],
   "categoria": "fitness"
@@ -3062,7 +3090,7 @@
    ],
    [
     "2026-10-20",
-    152.38
+    157.88
    ]
   ],
   "categoria": "tecnologia"
@@ -3085,6 +3113,10 @@
    [
     "2026-10-19",
     89.91
+   ],
+   [
+    "2026-10-20",
+    81.08
    ]
   ],
   "categoria": "casa"
@@ -3120,7 +3152,7 @@
    ],
    [
     "2026-10-20",
-    297.97
+    283.14
    ]
   ],
   "categoria": "pet"
@@ -3250,7 +3282,7 @@
    ],
    [
     "2026-10-20",
-    29.07
+    27.25
    ]
   ],
   "categoria": "pet"
@@ -3278,7 +3310,7 @@
    ],
    [
     "2026-10-20",
-    222.3
+    215.28
    ]
   ],
   "categoria": "casa"
@@ -3359,6 +3391,10 @@
    [
     "2026-10-18",
     873.52
+   ],
+   [
+    "2026-10-20",
+    873.52
    ]
   ],
   "categoria": "tecnologia"
@@ -3396,5 +3432,35 @@
    ]
   ],
   "categoria": "pet"
+ },
+ "tablet infantil stitch positivo vision tab 7 - processador octa-core 3gb ram 64gb armazenamento tela 7 ips, bateria 3100mah, android 14 go, wi-fi - inclui capa de proteção e mochila, presente crianças": {
+  "nome": "Tablet Infantil Stitch Positivo Vision Tab 7 - Processador Octa-Core 3GB RAM 64GB Armazenamento Tela 7 IPS, Bateria 3100mAh, Android 14 GO, Wi-Fi - Inclui Capa de Proteção e Mochila, Presente Crianças",
+  "precos": [
+   [
+    "2026-10-20",
+    478.0
+   ]
+  ],
+  "categoria": "tecnologia"
+ },
+ "notebook acer aspire 5 a515-45-r2a3 amd ryzen 5 5500u windows 11 home 8gb 512gb ssd 15,6' full hd": {
+  "nome": "Notebook Acer Aspire 5 A515-45-R2A3 AMD Ryzen 5 5500U Windows 11 Home 8GB 512GB SSD 15,6' Full HD",
+  "precos": [
+   [
+    "2026-10-20",
+    3519.0
+   ]
+  ],
+  "categoria": "tecnologia"
+ },
+ "fone de ouvido bluetooth 5.4 soundcore p30i da anker, cancelamento de ruído adaptativo, graves poderosos, 45h de reprodução, estojo 2-em-1 com suporte para celular, ip54, fone sem fio tws, preto": {
+  "nome": "Fone de Ouvido Bluetooth 5.4 soundcore P30i da Anker, Cancelamento de Ruído Adaptativo, Graves Poderosos, 45H de Reprodução, Estojo 2-em-1 com Suporte para Celular, IP54, Fone sem fio TWS, Preto",
+  "precos": [
+   [
+    "2026-10-20",
+    196.5
+   ]
+  ],
+  "categoria": "tecnologia"
  }
 }
