@@ -186,8 +186,8 @@
     "categoria": "fitness",
     "nome": "Tênis Kappa Pulse Supra Masculino Feminino — 😱 DE: R$259,99",
     "preco_original": 259.99,
-    "preco_atual": 131.54,
-    "desconto": 49,
+    "preco_atual": 135.66,
+    "desconto": 48,
     "cupom": "",
     "link": "https://meli.la/2nHirjG",
     "imagem": "https://raw.githubusercontent.com/reidecopaspromo/rei_de_copas_promo/main/imagens/320-1792464510.jpg",
@@ -312,8 +312,8 @@
     "categoria": "tecnologia",
     "nome": "Impressora 3d Bambu Lab A1 Combo - Cinza — 😱 DE: R$11.750,00",
     "preco_original": 11750.0,
-    "preco_atual": 4071.0,
-    "desconto": 65,
+    "preco_atual": 4049.0,
+    "desconto": 66,
     "cupom": "",
     "link": "https://meli.la/2Jnb6hB",
     "imagem": "https://raw.githubusercontent.com/reidecopaspromo/rei_de_copas_promo/main/imagens/285-1792329966.jpg",
@@ -532,25 +532,11 @@
     "capturado_em": "2026-10-18T12:05:07.904166+00:00"
   },
   {
-    "id": "284-1792311305",
-    "categoria": "casa",
-    "nome": "Capa Protetor De Colchão Elástico Queen Impermeável Matelado — 😱 DE: R$78,90",
-    "preco_original": 78.9,
-    "preco_atual": 29.99,
-    "desconto": 62,
-    "cupom": "",
-    "link": "https://meli.la/1mCvzXh",
-    "imagem": "https://raw.githubusercontent.com/reidecopaspromo/rei_de_copas_promo/main/imagens/284-1792311305.jpg",
-    "cta_texto": "Quer receber essa e muitas outras ofertas em primeira mão? Entre no nosso grupo:",
-    "link_grupo": "https://chat.whatsapp.com/IGhdGWeevudHOUo6sifLNd",
-    "capturado_em": "2026-10-18T08:15:11.035501+00:00"
-  },
-  {
     "id": "276-1792308904",
     "categoria": "casa",
     "nome": "Balança Digital Corporal Bioimpedância Aplicativo Bluetooth Relaxmedic — 😱 DE: R$279,90",
     "preco_original": 279.9,
-    "preco_atual": 109.55,
+    "preco_atual": 108.47,
     "desconto": 61,
     "cupom": "",
     "link": "https://meli.la/1Bk3zZT",
@@ -880,19 +866,5 @@
     "cta_texto": "Quer receber essa e muitas outras ofertas em primeira mão? Entre no nosso grupo:",
     "link_grupo": "https://chat.whatsapp.com/KwAzQsQkH4CEHL3DuinUKL",
     "capturado_em": "2026-10-18T04:36:47.013109+00:00"
-  },
-  {
-    "id": "471-1792296403",
-    "categoria": "pet",
-    "nome": "Gran Plus Menu Castrados Para Gato Adulto Sabor Salmão Y Arroz De 10.1 Kg — 😱 DE: R$261,49",
-    "preco_original": 261.49,
-    "preco_atual": 144.63,
-    "desconto": 45,
-    "cupom": "",
-    "link": "https://meli.la/1ZmCwce",
-    "imagem": "https://raw.githubusercontent.com/reidecopaspromo/rei_de_copas_promo/main/imagens/471-1792296403.jpg",
-    "cta_texto": "Quer receber essa e muitas outras ofertas em primeira mão? Entre no nosso grupo:",
-    "link_grupo": "https://chat.whatsapp.com/KwAzQsQkH4CEHL3DuinUKL",
-    "capturado_em": "2026-10-18T04:06:45.372836+00:00"
   }
 ]
