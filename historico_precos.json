@@ -51,6 +51,10 @@
    [
     "2026-10-22",
     149.9
+   ],
+   [
+    "2026-10-24",
+    129.71
    ]
   ],
   "categoria": "pet"
@@ -356,7 +360,7 @@
    ],
    [
     "2026-10-24",
-    108.47
+    109.87
    ]
   ],
   "categoria": "casa"
@@ -732,7 +736,7 @@
    ],
    [
     "2026-10-24",
-    149.99
+    140.99
    ]
   ],
   "categoria": "casa"
@@ -1600,7 +1604,7 @@
    ],
    [
     "2026-10-24",
-    1809.0
+    1792.0
    ]
   ],
   "categoria": "casa"
@@ -4449,6 +4453,10 @@
    [
     "2026-10-22",
     158.8
+   ],
+   [
+    "2026-10-24",
+    158.8
    ]
   ],
   "categoria": "pet"
@@ -4471,6 +4479,10 @@
    [
     "2026-10-22",
     182.0
+   ],
+   [
+    "2026-10-24",
+    202.16
    ]
   ],
   "categoria": "pet"
@@ -4545,6 +4557,10 @@
    [
     "2026-10-22",
     176.0
+   ],
+   [
+    "2026-10-24",
+    178.25
    ]
   ],
   "categoria": "pet"
@@ -4773,6 +4789,10 @@
    [
     "2026-10-22",
     3569.0
+   ],
+   [
+    "2026-10-24",
+    3569.0
    ]
   ],
   "categoria": "tecnologia"
@@ -4782,6 +4802,10 @@
   "precos": [
    [
     "2026-10-20",
+    196.5
+   ],
+   [
+    "2026-10-24",
     196.5
    ]
   ],
@@ -4872,5 +4896,15 @@
    ]
   ],
   "categoria": "fitness"
+ },
+ "cadeira de escritorio gamer ergonômica dunamis preta marqs home reclinável 180kg resistente giratória confortavel computador": {
+  "nome": "Cadeira De Escritorio Gamer Ergonômica Dunamis Preta Marqs Home Reclinável 180kg Resistente Giratória Confortavel Computador",
+  "precos": [
+   [
+    "2026-10-24",
+    572.2
+   ]
+  ],
+  "categoria": "tecnologia"
  }
 }
