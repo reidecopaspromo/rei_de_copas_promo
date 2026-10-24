@@ -410,7 +410,7 @@
    ],
    [
     "2026-10-24",
-    99.9
+    93.91
    ]
   ],
   "categoria": "casa"
@@ -503,6 +503,10 @@
    [
     "2026-10-22",
     161.0
+   ],
+   [
+    "2026-10-24",
+    139.0
    ]
   ],
   "categoria": "casa"
@@ -725,6 +729,10 @@
    [
     "2026-10-22",
     142.4
+   ],
+   [
+    "2026-10-24",
+    149.99
    ]
   ],
   "categoria": "casa"
@@ -1321,6 +1329,10 @@
    [
     "2026-10-23",
     389.9
+   ],
+   [
+    "2026-10-24",
+    350.91
    ]
   ],
   "categoria": "casa"
@@ -1588,7 +1600,7 @@
    ],
    [
     "2026-10-24",
-    1792.0
+    1809.0
    ]
   ],
   "categoria": "casa"
@@ -3924,7 +3936,7 @@
    ],
    [
     "2026-10-24",
-    155.0
+    159.31
    ]
   ],
   "categoria": "fitness"
@@ -3962,7 +3974,7 @@
    ],
    [
     "2026-10-24",
-    189.0
+    168.38
    ]
   ],
   "categoria": "fitness"
@@ -4273,6 +4285,10 @@
    [
     "2026-10-23",
     85.9
+   ],
+   [
+    "2026-10-24",
+    74.73
    ]
   ],
   "categoria": "casa"
@@ -4784,7 +4800,7 @@
    ],
    [
     "2026-10-24",
-    55.55
+    53.88
    ]
   ],
   "categoria": "casa"
@@ -4813,6 +4829,46 @@
    [
     "2026-10-24",
     455.0
+   ]
+  ],
+  "categoria": "fitness"
+ },
+ "tênis adidas masculino adizero drive rc corrida performance": {
+  "nome": "Tênis adidas Masculino Adizero Drive Rc Corrida Performance",
+  "precos": [
+   [
+    "2026-10-24",
+    692.55
+   ]
+  ],
+  "categoria": "fitness"
+ },
+ "legging lipedema anticelulite emana compressão infravermelho": {
+  "nome": "Legging Lipedema Anticelulite Emana Compressão Infravermelho",
+  "precos": [
+   [
+    "2026-10-24",
+    145.0
+   ]
+  ],
+  "categoria": "fitness"
+ },
+ "copo térmico gigante 1,2l inox com tampa inox canudo escova roxo claro cor pura / material fosco": {
+  "nome": "Copo Térmico Gigante 1,2l Inox Com Tampa Inox Canudo Escova Roxo Claro Cor Pura / Material Fosco",
+  "precos": [
+   [
+    "2026-10-24",
+    48.99
+   ]
+  ],
+  "categoria": "fitness"
+ },
+ "proteína max titanium whey pro concetrado em pó sabor morango x 1kg": {
+  "nome": "Proteína Max Titanium Whey Pro Concetrado em pó sabor Morango x 1kg",
+  "precos": [
+   [
+    "2026-10-24",
+    99.9
    ]
   ],
   "categoria": "fitness"
