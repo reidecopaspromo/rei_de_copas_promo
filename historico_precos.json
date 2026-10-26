@@ -150,7 +150,7 @@
    ],
    [
     "2026-10-26",
-    1529.0
+    1603.0
    ]
   ],
   "categoria": "tecnologia"
@@ -3814,7 +3814,7 @@
    ],
    [
     "2026-10-26",
-    50.5
+    47.97
    ]
   ],
   "categoria": "pet"
@@ -3904,7 +3904,7 @@
    ],
    [
     "2026-10-26",
-    118.0
+    114.98
    ]
   ],
   "categoria": "pet"
@@ -4360,7 +4360,7 @@
    ],
    [
     "2026-10-26",
-    582.0
+    523.8
    ]
   ],
   "categoria": "tecnologia"
@@ -4503,6 +4503,10 @@
    [
     "2026-10-25",
     189.0
+   ],
+   [
+    "2026-10-26",
+    191.8
    ]
   ],
   "categoria": "fitness"
@@ -5500,7 +5504,7 @@
    ],
    [
     "2026-10-26",
-    145.0
+    137.75
    ]
   ],
   "categoria": "fitness"
@@ -5564,9 +5568,49 @@
    ],
    [
     "2026-10-26",
-    138.33
+    151.05
    ]
   ],
   "categoria": "tecnologia"
+ },
+ "camiseta térmica longa poliamida puma feminina uv original": {
+  "nome": "Camiseta Térmica Longa Poliamida Puma Feminina Uv Original",
+  "precos": [
+   [
+    "2026-10-26",
+    96.02
+   ]
+  ],
+  "categoria": "fitness"
+ },
+ "saco de box 90 cm profissional + luva bate saco preto": {
+  "nome": "Saco De Box 90 Cm Profissional + Luva Bate Saco Preto",
+  "precos": [
+   [
+    "2026-10-26",
+    68.08
+   ]
+  ],
+  "categoria": "fitness"
+ },
+ "suporte de parede para saco de pancada luta boxe e muay thai preto": {
+  "nome": "Suporte De Parede Para Saco De Pancada Luta Boxe E Muay Thai Preto",
+  "precos": [
+   [
+    "2026-10-26",
+    54.9
+   ]
+  ],
+  "categoria": "fitness"
+ },
+ "creatina soldiers nutrition em pó sem sabor x 500g": {
+  "nome": "Creatina Soldiers Nutrition em pó Sem sabor x 500g",
+  "precos": [
+   [
+    "2026-10-26",
+    47.9
+   ]
+  ],
+  "categoria": "fitness"
  }
 }
