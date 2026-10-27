@@ -235,6 +235,10 @@
    [
     "2026-10-26",
     134.9
+   ],
+   [
+    "2026-10-27",
+    134.9
    ]
   ],
   "categoria": "tecnologia"
@@ -296,6 +300,10 @@
    ],
    [
     "2026-10-26",
+    2199.0
+   ],
+   [
+    "2026-10-27",
     2199.0
    ]
   ],
@@ -359,6 +367,10 @@
    [
     "2026-10-26",
     1213.0
+   ],
+   [
+    "2026-10-27",
+    1228.0
    ]
   ],
   "categoria": "tecnologia"
@@ -424,7 +436,7 @@
    ],
    [
     "2026-10-27",
-    108.47
+    112.97
    ]
   ],
   "categoria": "casa"
@@ -544,6 +556,10 @@
    ],
    [
     "2026-10-26",
+    398.05
+   ],
+   [
+    "2026-10-27",
     398.05
    ]
   ],
@@ -753,6 +769,10 @@
    [
     "2026-10-26",
     1689.0
+   ],
+   [
+    "2026-10-27",
+    1480.0
    ]
   ],
   "categoria": "tecnologia"
@@ -876,7 +896,7 @@
    ],
    [
     "2026-10-27",
-    139.49
+    157.67
    ]
   ],
   "categoria": "casa"
@@ -938,6 +958,10 @@
    ],
    [
     "2026-10-26",
+    938.03
+   ],
+   [
+    "2026-10-27",
     938.03
    ]
   ],
@@ -1067,6 +1091,10 @@
    [
     "2026-10-26",
     76.53
+   ],
+   [
+    "2026-10-27",
+    76.53
    ]
   ],
   "categoria": "tecnologia"
@@ -1195,6 +1223,10 @@
    [
     "2026-10-26",
     76.54
+   ],
+   [
+    "2026-10-27",
+    76.54
    ]
   ],
   "categoria": "tecnologia"
@@ -1318,6 +1350,10 @@
    ],
    [
     "2026-10-26",
+    1173.0
+   ],
+   [
+    "2026-10-27",
     1173.0
    ]
   ],
@@ -1527,6 +1563,10 @@
    [
     "2026-10-26",
     925.79
+   ],
+   [
+    "2026-10-27",
+    925.79
    ]
   ],
   "categoria": "tecnologia"
@@ -1647,6 +1687,10 @@
    [
     "2026-10-26",
     196.07
+   ],
+   [
+    "2026-10-27",
+    190.19
    ]
   ],
   "categoria": "tecnologia"
@@ -1727,6 +1771,10 @@
    [
     "2026-10-18",
     2499.0
+   ],
+   [
+    "2026-10-27",
+    2159.0
    ]
   ],
   "categoria": "tecnologia"
@@ -1788,6 +1836,10 @@
    ],
    [
     "2026-10-26",
+    32.9
+   ],
+   [
+    "2026-10-27",
     32.9
    ]
   ],
@@ -1919,6 +1971,10 @@
    [
     "2026-10-20",
     1069.0
+   ],
+   [
+    "2026-10-27",
+    971.1
    ]
   ],
   "categoria": "tecnologia"
@@ -3048,7 +3104,7 @@
    ],
    [
     "2026-10-27",
-    137.9
+    132.0
    ]
   ],
   "categoria": "pet"
@@ -3220,7 +3276,7 @@
    ],
    [
     "2026-10-27",
-    40.46
+    42.33
    ]
   ],
   "categoria": "pet"
@@ -3924,7 +3980,7 @@
    ],
    [
     "2026-10-27",
-    69.0
+    67.79
    ]
   ],
   "categoria": "pet"
@@ -4339,6 +4395,10 @@
    [
     "2026-10-26",
     232.9
+   ],
+   [
+    "2026-10-27",
+    229.9
    ]
   ],
   "categoria": "tecnologia"
@@ -4802,7 +4862,7 @@
    ],
    [
     "2026-10-27",
-    147.28
+    147.8
    ]
   ],
   "categoria": "fitness"
@@ -4844,7 +4904,7 @@
    ],
    [
     "2026-10-27",
-    38.9
+    39.6
    ]
   ],
   "categoria": "fitness"
@@ -5047,6 +5107,10 @@
    [
     "2026-10-24",
     152.38
+   ],
+   [
+    "2026-10-27",
+    157.88
    ]
   ],
   "categoria": "tecnologia"
@@ -5637,6 +5701,10 @@
    [
     "2026-10-26",
     559.0
+   ],
+   [
+    "2026-10-27",
+    559.0
    ]
   ],
   "categoria": "tecnologia"
@@ -5763,6 +5831,10 @@
    [
     "2026-10-25",
     1749.0
+   ],
+   [
+    "2026-10-27",
+    1648.0
    ]
   ],
   "categoria": "tecnologia"
@@ -5897,6 +5969,10 @@
    [
     "2026-10-26",
     151.05
+   ],
+   [
+    "2026-10-27",
+    129.63
    ]
   ],
   "categoria": "tecnologia"
@@ -5994,5 +6070,25 @@
    ]
   ],
   "categoria": "pet"
+ },
+ "fone de ouvido headphone dapon h02d bluetooth 5.1 over-ear 22h preto": {
+  "nome": "Fone De Ouvido Headphone Dapon H02D Bluetooth 5.1 Over-ear 22h Preto",
+  "precos": [
+   [
+    "2026-10-27",
+    76.53
+   ]
+  ],
+  "categoria": "tecnologia"
+ },
+ "relógio inteligente smartwatch alexa chamadas bluetooth novante rosa digital feminino masculino esportivo notificações instantâneas agua ip68 350mah 1.85 amoled com codificador monitor cardíaco spo2": {
+  "nome": "Relógio Inteligente Smartwatch Alexa Chamadas Bluetooth NOVANTE Rosa Digital Feminino Masculino Esportivo Notificações Instantâneas Agua IP68 350mAh 1.85 AMOLED Com Codificador Monitor Cardíaco Spo2",
+  "precos": [
+   [
+    "2026-10-27",
+    187.0
+   ]
+  ],
+  "categoria": "tecnologia"
  }
 }
