@@ -190,7 +190,7 @@
    ],
    [
     "2026-10-30",
-    1719.0
+    1619.0
    ]
   ],
   "categoria": "tecnologia"
@@ -438,7 +438,7 @@
    ],
    [
     "2026-10-30",
-    1074.0
+    1324.0
    ]
   ],
   "categoria": "tecnologia"
@@ -912,7 +912,7 @@
    ],
    [
     "2026-10-30",
-    1399.0
+    1480.0
    ]
   ],
   "categoria": "tecnologia"
@@ -4926,7 +4926,7 @@
    ],
    [
     "2026-10-30",
-    28.9
+    24.58
    ]
   ],
   "categoria": "pet"
@@ -5610,7 +5610,7 @@
    ],
    [
     "2026-10-30",
-    154.0
+    137.7
    ]
   ],
   "categoria": "fitness"
@@ -6889,6 +6889,10 @@
    [
     "2026-10-28",
     99.9
+   ],
+   [
+    "2026-10-30",
+    78.9
    ]
   ],
   "categoria": "fitness"
@@ -7230,5 +7234,25 @@
    ]
   ],
   "categoria": "pet"
+ },
+ "suporte para abdominal com ventosa abdominais fitness uni cinza - r$ 37,99": {
+  "nome": "Suporte Para Abdominal Com Ventosa Abdominais Fitness Uni Cinza - R$ 37,99",
+  "precos": [
+   [
+    "2026-10-30",
+    37.99
+   ]
+  ],
+  "categoria": "fitness"
+ },
+ "bola de futebol trionda training copa do mundo da fifa 26tm adidas": {
+  "nome": "Bola de Futebol Trionda Training Copa do Mundo da FIFA 26TM adidas",
+  "precos": [
+   [
+    "2026-10-30",
+    149.99
+   ]
+  ],
+  "categoria": "fitness"
  }
 }
