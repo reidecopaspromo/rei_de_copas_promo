@@ -304,30 +304,73 @@ ESPESSURA_MOLDURA = 6
 MARGEM_INTERNA = 46
 
 
+def _coracao(d, cx, cy, s, cor):
+    import math
+    pts = []
+    for k in range(60):
+        a = 2 * math.pi * k / 60
+        x = 16 * math.sin(a) ** 3
+        y = -(13 * math.cos(a) - 5 * math.cos(2 * a) - 2 * math.cos(3 * a) - math.cos(4 * a))
+        pts.append((cx + x * s / 17, cy + y * s / 17))
+    d.polygon(pts, fill=cor)
+
+
+def _selo_rei(tam):
+    """Selo dourado redondo com coroa e coração (marca do Rei)."""
+    s = Image.new("RGBA", (tam, tam), (0, 0, 0, 0))
+    d = ImageDraw.Draw(s)
+    d.ellipse([0, 0, tam - 1, tam - 1], fill=(214, 168, 79, 255))
+    d.ellipse([5, 5, tam - 6, tam - 6], outline=(240, 214, 150, 255), width=2)
+    cx, cy, k = tam / 2, tam * 0.33, tam * 0.16
+    coroa = [(-1, .35), (-1, -.45), (-.5, -.05), (0, -.7), (.5, -.05), (1, -.45), (1, .35)]
+    d.polygon([(cx + x * k, cy + y * k) for x, y in coroa], fill=(255, 250, 235, 255))
+    _coracao(d, tam / 2, tam * 0.62, tam * 0.24, (255, 250, 235, 255))
+    return s
+
+
 def processar_imagem(bytes_originais, nicho="pet"):
-    """Recebe a foto crua do Telegram e devolve uma versão quadrada,
-    com fundo creme e moldura na cor do nicho, pronta para a página."""
-    img = Image.open(io.BytesIO(bytes_originais)).convert("RGB")
+    """Moldura 'Vitrine Real': fundo creme iluminado, produto com sombra suave no
+    chão, filete dourado duplo (o de dentro na cor do nicho) e selo do Rei."""
+    from PIL import ImageChops, ImageFilter
+    T = TAMANHO_IMAGEM
+    foto = Image.open(io.BytesIO(bytes_originais)).convert("RGB")
+    # corta bordas brancas sobrando em volta do produto
+    caixa = ImageOps.invert(foto).point(lambda v: 255 if v > 12 else 0).getbbox()
+    if caixa:
+        foto = foto.crop(caixa)
+    p = ImageOps.contain(foto, (560, 560), Image.LANCZOS)
+    # foto 'de estúdio' (fundo branco) ganha sombra no chão; foto com cenário, não
+    borda = [p.getpixel((x, y)) for x in (0, p.width - 1) for y in range(0, p.height, max(1, p.height // 10))]
+    fundo_branco = sum(sum(c) / 3 for c in borda) / len(borda) > 235
 
-    canvas = Image.new("RGB", (TAMANHO_IMAGEM, TAMANHO_IMAGEM), COR_FUNDO_IMAGEM)
+    # fundo creme com luz no centro
+    luz = Image.new("L", (T // 4, T // 4), 0)
+    ImageDraw.Draw(luz).ellipse([T / 4 * 0.025, T / 4 * -0.055, T / 4 * 0.975, T / 4 * 0.895], fill=255)
+    luz = luz.filter(ImageFilter.GaussianBlur(T / 14)).resize((T, T))
+    img = Image.composite(Image.new("RGB", (T, T), (255, 253, 248)), Image.new("RGB", (T, T), (236, 230, 216)), luz)
 
-    area_util = TAMANHO_IMAGEM - 2 * MARGEM_INTERNA
-    img_ajustada = ImageOps.contain(img, (area_util, area_util))
+    # sombra no chão
+    cy = 400 - 10
+    base = cy + p.height / 2 + 18
+    sombra = Image.new("L", (T, T), 0)
+    w = p.width * 0.8
+    ImageDraw.Draw(sombra).ellipse([T / 2 - w / 2, base - w * 0.07, T / 2 + w / 2, base + w * 0.07], fill=110)
+    if fundo_branco:
+        img = Image.composite(Image.new("RGB", (T, T), (60, 50, 35)), img, sombra.filter(ImageFilter.GaussianBlur(18)))
 
-    pos_x = (TAMANHO_IMAGEM - img_ajustada.width) // 2
-    pos_y = (TAMANHO_IMAGEM - img_ajustada.height) // 2
-    canvas.paste(img_ajustada, (pos_x, pos_y))
+    # produto: o branco da foto 'some' no fundo creme
+    camada = Image.new("RGB", (T, T), (255, 255, 255))
+    camada.paste(p, ((T - p.width) // 2, int(cy - p.height / 2)))
+    img = ImageChops.multiply(img, camada)
 
-    desenho = ImageDraw.Draw(canvas)
-    metade = ESPESSURA_MOLDURA // 2
-    desenho.rectangle(
-        [metade, metade, TAMANHO_IMAGEM - metade - 1, TAMANHO_IMAGEM - metade - 1],
-        outline=COR_MOLDURA_POR_NICHO.get(nicho, COR_MOLDURA_POR_NICHO["pet"]),
-        width=ESPESSURA_MOLDURA,
-    )
+    d = ImageDraw.Draw(img)
+    d.rectangle([10, 10, T - 11, T - 11], outline=(214, 168, 79), width=4)
+    d.rectangle([22, 22, T - 23, T - 23], outline=COR_MOLDURA_POR_NICHO.get(nicho, COR_MOLDURA_POR_NICHO["pet"]), width=2)
+    selo = _selo_rei(84)
+    img.paste(selo, (T - 84 - 40, 40), selo)
 
     saida = io.BytesIO()
-    canvas.save(saida, format="JPEG", quality=88)
+    img.save(saida, format="JPEG", quality=90)
     return saida.getvalue()
 
 
@@ -548,7 +591,21 @@ async def revalidar_precos(context: ContextTypes.DEFAULT_TYPE):
     precos_lidos = []
     mudou = False
 
+    fotos_completadas = 0
     for oferta in ofertas:
+        # oferta sem foto (entrou quando o Cupom Radar estava sem mídia): busca a foto no link
+        if not oferta.get("imagem"):
+            try:
+                url_foto = buscar_imagem_produto(oferta.get("link"))
+                if url_foto:
+                    nicho_of = oferta.get("categoria") or "pet"
+                    bytes_proc = processar_imagem(baixar_imagem(url_foto), nicho_of)
+                    oferta["imagem"] = salvar_imagem(f"imagens/{oferta.get('id') or int(datetime.now().timestamp())}.jpg", bytes_proc)
+                    fotos_completadas += 1
+                    mudou = True
+            except Exception as e:
+                log.warning("Revalidação: não foi possível completar a foto de %s: %s", oferta.get("nome"), e)
+
         preco_listado = oferta.get("preco_atual")
         preco_real = buscar_preco_atual(oferta.get("link"))
 
@@ -591,6 +648,8 @@ async def revalidar_precos(context: ContextTypes.DEFAULT_TYPE):
 
     log.info("Revalidação: %s oferta(s) conferidas, %s não deu para conferir.",
              conferidas, nao_conferidas)
+    if fotos_completadas:
+        log.info("Revalidação: %s foto(s) que faltavam foram completadas.", fotos_completadas)
     if removidas_desconto:
         log.info("Revalidação: %s oferta(s) removidas por desconto abaixo do mínimo:", len(removidas_desconto))
         for nome, desc, exigido in removidas_desconto:
@@ -1182,7 +1241,7 @@ def main():
     app.job_queue.run_repeating(
         revalidar_precos,
         interval=intervalo_segundos,
-        first=10 * 60,  # espera 10 min após o robô subir antes da primeira checagem
+        first=5 * 60,  # espera 5 min após o robô subir antes da primeira checagem
         name="revalidar_precos",
     )
 
