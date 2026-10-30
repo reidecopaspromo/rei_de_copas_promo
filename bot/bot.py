@@ -61,8 +61,8 @@ CRITERIOS = {
     "faixa_barata_ate": 50,             # em R$: abaixo disso, vale o desconto mínimo mais alto
     "desconto_min_barato": 30,          # em % (produtos abaixo de "faixa_barata_ate")
     "preco_max": None,                  # None = sem limite superior
-    "maximo_ofertas_por_nicho": 21,     # 3 destaques + 18 ofertas do dia, por nicho
-    "validade_horas": 48,               # oferta mais velha que isso sai do site (use 99999 para desligar)
+    "maximo_ofertas_por_nicho": 33,     # 3 destaques + 30 ofertas do dia, por nicho
+    "validade_horas": 84,               # oferta mais velha que isso sai do site (use 99999 para desligar)
     "limite_diario_por_nicho": 40,      # teto de segurança de ofertas aprovadas por dia, por nicho
     "tolerancia_aumento_preco": 0.10,   # 10% (produtos a partir de "faixa_barata_ate"): até aqui o preço
                                         # é atualizado e a oferta continua no ar
@@ -449,6 +449,85 @@ def buscar_preco_atual(url, timeout=12):
     return Counter(candidatos).most_common(1)[0][0]
 
 
+# ----------------------------------------------------------------------
+# IMAGEM DO PRODUTO — quando a mensagem chega sem foto (Cupom Radar sem mídia)
+# ----------------------------------------------------------------------
+
+def _url_imagem_ml(valor):
+    """Converte o id de imagem do Mercado Livre (ex.: 123-MLB456_102024) em endereço."""
+    if not isinstance(valor, str) or not valor:
+        return None
+    if valor.startswith("http"):
+        return valor.replace("http://", "https://")
+    if re.fullmatch(r"[\w-]+", valor):
+        return f"https://http2.mlstatic.com/D_NQ_NP_2X_{valor}-F.jpg"
+    return None
+
+
+def _imagem_no_cartao(cartao):
+    """Procura a imagem principal dentro do cartão de produto da página de afiliado."""
+    fotos = cartao.get("pictures")
+    if isinstance(fotos, dict):
+        lista = fotos.get("pictures") or []
+        if lista and isinstance(lista[0], dict):
+            url = _url_imagem_ml(lista[0].get("url") or lista[0].get("secure_url") or lista[0].get("id"))
+            if url:
+                return url
+    texto = json.dumps(cartao)
+    m = re.search(r'https?://http2\.mlstatic\.com/[^"\\]+?\.(?:jpg|jpeg|webp|png)', texto)
+    return m.group(0) if m else None
+
+
+def buscar_imagem_produto(url, timeout=12):
+    """Devolve o endereço da foto do produto no link de afiliado, ou None.
+    1) página de afiliado (meli.la -> /social/): foto do produto compartilhado;
+    2) qualquer outra página: a imagem 'og:image'."""
+    if not url:
+        return None
+    try:
+        resp = requests.get(url, headers=HEADERS_REVALIDACAO, timeout=timeout, allow_redirects=True)
+        if resp.status_code != 200:
+            log.warning("Imagem: link %s respondeu código %s", url, resp.status_code)
+            return None
+        pagina = resp.text
+    except Exception as e:
+        log.warning("Imagem: não foi possível abrir o link %s: %s", url, e)
+        return None
+
+    if "/social/" in resp.url:
+        marcador = "_n.ctx.r="
+        inicio = pagina.find(marcador)
+        if inicio != -1:
+            try:
+                dados, _ = json.JSONDecoder().raw_decode(pagina[inicio + len(marcador):])
+                dados_pagina = dados["appProps"]["pageProps"]["data"]
+                alvo = dados_pagina["shared_item"]["id"]
+                for cartao in _cartoes_de_produto(dados_pagina):
+                    meta = cartao.get("metadata") or {}
+                    if alvo in (meta.get("id"), meta.get("product_id")):
+                        achada = _imagem_no_cartao(cartao)
+                        if achada:
+                            return achada
+                achada = _imagem_no_cartao(dados_pagina.get("shared_item") or {})
+                if achada:
+                    return achada
+            except Exception as e:
+                log.warning("Imagem: falha ao ler dados da página de afiliado: %s", e)
+
+    for padrao in [r'property="og:image"\s+content="([^"]+)"', r'content="([^"]+)"\s+property="og:image"']:
+        m = re.search(padrao, pagina)
+        if m and ("/social/" not in resp.url or "mlstatic" in m.group(1)):
+            return m.group(1)
+    log.warning("Imagem: nenhuma foto encontrada em %s (endereço final: %s)", url, resp.url)
+    return None
+
+
+def baixar_imagem(url, timeout=15):
+    resp = requests.get(url, headers=HEADERS_REVALIDACAO, timeout=timeout)
+    resp.raise_for_status()
+    return resp.content
+
+
 async def revalidar_precos(context: ContextTypes.DEFAULT_TYPE):
     log.info("Revalidação periódica de preços iniciada...")
     try:
@@ -672,6 +751,16 @@ async def nova_mensagem(update: Update, context: ContextTypes.DEFAULT_TYPE):
             imagem_url = salvar_imagem(f"imagens/{id_oferta}.jpg", bytes_processados)
         except Exception as e:
             log.error("Falha ao baixar/processar/salvar imagem da oferta: %s", e)
+
+    if not imagem_url:   # mensagem sem foto: busca a foto do produto no próprio link
+        try:
+            url_foto = buscar_imagem_produto(oferta["link"])
+            if url_foto:
+                bytes_processados = processar_imagem(baixar_imagem(url_foto), nicho)
+                imagem_url = salvar_imagem(f"imagens/{id_oferta}.jpg", bytes_processados)
+                log.info("[%s] Foto buscada no link do produto: %s", nicho, url_foto)
+        except Exception as e:
+            log.error("Falha ao buscar a foto no link do produto: %s", e)
 
     nova = {
         "id": id_oferta,
