@@ -534,7 +534,7 @@
    ],
    [
     "2026-11-03",
-    1225.0
+    1260.0
    ]
   ],
   "categoria": "tecnologia"
@@ -1088,7 +1088,7 @@
    ],
    [
     "2026-11-03",
-    1520.0
+    1539.0
    ]
   ],
   "categoria": "tecnologia"
@@ -2146,7 +2146,7 @@
    ],
    [
     "2026-11-03",
-    911.01
+    911.04
    ]
   ],
   "categoria": "tecnologia"
@@ -2326,7 +2326,7 @@
    ],
    [
     "2026-11-03",
-    190.19
+    149.0
    ]
   ],
   "categoria": "tecnologia"
@@ -3046,7 +3046,7 @@
    ],
    [
     "2026-11-03",
-    483.99
+    500.0
    ]
   ],
   "categoria": "tecnologia"
@@ -4928,7 +4928,7 @@
    ],
    [
     "2026-11-03",
-    144.17
+    128.0
    ]
   ],
   "categoria": "fitness"
@@ -7670,7 +7670,7 @@
    ],
    [
     "2026-11-03",
-    918.9
+    944.1
    ]
   ],
   "categoria": "tecnologia"
@@ -7802,7 +7802,7 @@
    ],
    [
     "2026-11-03",
-    476.0
+    553.0
    ]
   ],
   "categoria": "tecnologia"
@@ -7962,7 +7962,7 @@
    ],
    [
     "2026-11-03",
-    1563.0
+    1657.0
    ]
   ],
   "categoria": "tecnologia"
@@ -8557,6 +8557,10 @@
    [
     "2026-10-28",
     309.9
+   ],
+   [
+    "2026-11-03",
+    249.9
    ]
   ],
   "categoria": "fitness"
@@ -8586,6 +8590,10 @@
    ],
    [
     "2026-11-02",
+    402.8
+   ],
+   [
+    "2026-11-03",
     402.8
    ]
   ],
@@ -8782,9 +8790,49 @@
   "precos": [
    [
     "2026-11-03",
-    177.0
+    162.84
    ]
   ],
   "categoria": "tecnologia"
+ },
+ "spank protetor bucal profissional moldável com estojo cor muaythai - boxe - muaythai - jiu-jitsu - mma - kickboxing - futebol - basquete - esporte de contato": {
+  "nome": "Spank Protetor Bucal Profissional Moldável Com Estojo Cor Muaythai - Boxe - Muaythai - Jiu-jitsu - Mma - Kickboxing - Futebol - Basquete - Esporte De Contato",
+  "precos": [
+   [
+    "2026-11-03",
+    32.0
+   ]
+  ],
+  "categoria": "fitness"
+ },
+ "camiseta térmica puma uv 50+ manga longa feminino original": {
+  "nome": "Camiseta Térmica Puma Uv 50+ Manga Longa Feminino Original",
+  "precos": [
+   [
+    "2026-11-03",
+    99.9
+   ]
+  ],
+  "categoria": "fitness"
+ },
+ "kimono infantil jiu jitsu haganah judô reforçado + faixa": {
+  "nome": "Kimono Infantil Jiu Jitsu Haganah Judô Reforçado + Faixa",
+  "precos": [
+   [
+    "2026-11-03",
+    134.1
+   ]
+  ],
+  "categoria": "fitness"
+ },
+ "suplemento whey isolate protein fuse 1,8kg sabor morango dark lab": {
+  "nome": "Suplemento Whey Isolate Protein Fuse 1,8kg sabor Morango Dark Lab",
+  "precos": [
+   [
+    "2026-11-03",
+    170.9
+   ]
+  ],
+  "categoria": "fitness"
  }
 }
