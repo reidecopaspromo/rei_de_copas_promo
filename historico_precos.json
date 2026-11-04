@@ -78,7 +78,7 @@
    ],
    [
     "2026-11-03",
-    149.0
+    140.99
    ]
   ],
   "categoria": "pet"
@@ -168,7 +168,7 @@
    ],
    [
     "2026-11-03",
-    29.99
+    26.09
    ]
   ],
   "categoria": "casa"
@@ -238,7 +238,7 @@
    ],
    [
     "2026-11-03",
-    1629.0
+    1719.0
    ]
   ],
   "categoria": "tecnologia"
@@ -456,7 +456,7 @@
    ],
    [
     "2026-11-03",
-    2399.0
+    2327.0
    ]
   ],
   "categoria": "tecnologia"
@@ -1096,7 +1096,7 @@
    ],
    [
     "2026-11-03",
-    1480.0
+    1520.0
    ]
   ],
   "categoria": "tecnologia"
@@ -2154,7 +2154,7 @@
    ],
    [
     "2026-11-03",
-    905.25
+    892.05
    ]
   ],
   "categoria": "tecnologia"
@@ -3062,7 +3062,7 @@
    ],
    [
     "2026-11-03",
-    500.0
+    499.0
    ]
   ],
   "categoria": "tecnologia"
@@ -4397,6 +4397,10 @@
    [
     "2026-11-01",
     76.98
+   ],
+   [
+    "2026-11-03",
+    61.4
    ]
   ],
   "categoria": "pet"
@@ -4584,7 +4588,7 @@
    ],
    [
     "2026-11-03",
-    181.24
+    182.7
    ]
   ],
   "categoria": "pet"
@@ -5540,7 +5544,7 @@
    ],
    [
     "2026-11-03",
-    114.98
+    105.99
    ]
   ],
   "categoria": "pet"
@@ -5832,6 +5836,10 @@
    ],
    [
     "2026-10-31",
+    69.99
+   ],
+   [
+    "2026-11-03",
     69.99
    ]
   ],
@@ -6198,7 +6206,7 @@
    ],
    [
     "2026-11-03",
-    4049.0
+    4129.0
    ]
   ],
   "categoria": "tecnologia"
@@ -7578,7 +7586,7 @@
    ],
    [
     "2026-11-03",
-    240.0
+    149.99
    ]
   ],
   "categoria": "casa"
@@ -8745,6 +8753,10 @@
    [
     "2026-10-29",
     69.0
+   ],
+   [
+    "2026-11-03",
+    53.65
    ]
   ],
   "categoria": "pet"
@@ -8902,5 +8914,25 @@
    ]
   ],
   "categoria": "fitness"
+ },
+ "nexgard cachorro 25 kg à 50 kg 3 comprimidos": {
+  "nome": "NexGard Cachorro 25 kg à 50 kg 3 Comprimidos",
+  "precos": [
+   [
+    "2026-11-03",
+    166.25
+   ]
+  ],
+  "categoria": "pet"
+ },
+ "ração quatree supreme gatos castrados frango e batata doce 10,1 kg": {
+  "nome": "Ração Quatree Supreme Gatos Castrados Frango E Batata Doce 10,1 kg",
+  "precos": [
+   [
+    "2026-11-03",
+    199.9
+   ]
+  ],
+  "categoria": "pet"
  }
 }
