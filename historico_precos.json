@@ -312,7 +312,7 @@
    ],
    [
     "2026-11-06",
-    36.99
+    34.03
    ]
   ],
   "categoria": "casa"
@@ -1027,6 +1027,10 @@
    [
     "2026-11-05",
     160.71
+   ],
+   [
+    "2026-11-06",
+    160.71
    ]
   ],
   "categoria": "casa"
@@ -1139,6 +1143,10 @@
    [
     "2026-11-05",
     184.9
+   ],
+   [
+    "2026-11-06",
+    174.9
    ]
   ],
   "categoria": "casa"
@@ -1436,6 +1444,10 @@
    ],
    [
     "2026-11-04",
+    169.24
+   ],
+   [
+    "2026-11-06",
     169.24
    ]
   ],
@@ -2005,6 +2017,10 @@
    [
     "2026-11-04",
     188.98
+   ],
+   [
+    "2026-11-06",
+    167.39
    ]
   ],
   "categoria": "casa"
@@ -2212,7 +2228,7 @@
    ],
    [
     "2026-11-06",
-    28.9
+    28.89
    ]
   ],
   "categoria": "casa"
@@ -3372,7 +3388,7 @@
    ],
    [
     "2026-11-06",
-    237.06
+    265.0
    ]
   ],
   "categoria": "casa"
@@ -3632,7 +3648,7 @@
    ],
    [
     "2026-11-06",
-    130.99
+    139.77
    ]
   ],
   "categoria": "fitness"
@@ -4880,7 +4896,7 @@
    ],
    [
     "2026-11-06",
-    76.98
+    73.13
    ]
   ],
   "categoria": "pet"
@@ -5348,7 +5364,7 @@
    ],
    [
     "2026-11-06",
-    294.73
+    279.99
    ]
   ],
   "categoria": "fitness"
@@ -6174,7 +6190,7 @@
    ],
    [
     "2026-11-06",
-    96.46
+    94.49
    ]
   ],
   "categoria": "pet"
@@ -6448,6 +6464,10 @@
    ],
    [
     "2026-11-04",
+    69.99
+   ],
+   [
+    "2026-11-06",
     69.99
    ]
   ],
@@ -7258,7 +7278,7 @@
    ],
    [
     "2026-11-06",
-    134.11
+    130.5
    ]
   ],
   "categoria": "fitness"
@@ -7665,6 +7685,10 @@
    [
     "2026-11-04",
     139.9
+   ],
+   [
+    "2026-11-06",
+    77.9
    ]
   ],
   "categoria": "casa"
@@ -7711,6 +7735,10 @@
    [
     "2026-10-31",
     176.32
+   ],
+   [
+    "2026-11-06",
+    108.85
    ]
   ],
   "categoria": "casa"
@@ -8348,7 +8376,7 @@
    ],
    [
     "2026-11-06",
-    98.0
+    193.9
    ]
   ],
   "categoria": "casa"
@@ -8738,7 +8766,7 @@
    ],
    [
     "2026-11-06",
-    434.83
+    497.7
    ]
   ],
   "categoria": "tecnologia"
@@ -9554,7 +9582,7 @@
    ],
    [
     "2026-11-06",
-    52.0
+    47.74
    ]
   ],
   "categoria": "pet"
@@ -9921,6 +9949,10 @@
    [
     "2026-11-02",
     619.9
+   ],
+   [
+    "2026-11-06",
+    599.9
    ]
   ],
   "categoria": "casa"
@@ -10098,7 +10130,7 @@
   "precos": [
    [
     "2026-11-06",
-    189.14
+    252.19
    ]
   ],
   "categoria": "casa"
@@ -10122,5 +10154,45 @@
    ]
   ],
   "categoria": "fitness"
+ },
+ "purificador de água gelada fria e natural eletrônico placa compacto electrolux pe12p com filtro carvão 6 meses ou 3000l painel touch preto bivolt": {
+  "nome": "Purificador de Água Gelada Fria e Natural Eletrônico Placa Compacto Electrolux PE12P com Filtro Carvão 6 meses ou 3000L Painel Touch Preto Bivolt",
+  "precos": [
+   [
+    "2026-11-06",
+    589.9
+   ]
+  ],
+  "categoria": "casa"
+ },
+ "wap ventiladores flow turbo coluna de pé - 50 cm - 60 - preto cinza - plástico - 8": {
+  "nome": "Wap Ventiladores Flow Turbo Coluna De pé - 50 cm - 60 - Preto Cinza - Plástico - 8",
+  "precos": [
+   [
+    "2026-11-06",
+    277.9
+   ]
+  ],
+  "categoria": "casa"
+ },
+ "aspirador de pó vertical electrolux 1450w stk15 com fio portátil de mão 2 em 1 e 1,6 litros de capacidade com filtro hepa cinza-escuro": {
+  "nome": "Aspirador de Pó Vertical Electrolux 1450W STK15 com Fio Portátil de Mão 2 em 1 e 1,6 Litros de capacidade com Filtro Hepa Cinza-escuro",
+  "precos": [
+   [
+    "2026-11-06",
+    170.0
+   ]
+  ],
+  "categoria": "casa"
+ },
+ "sanduicheira elétrica cadence san400 preta": {
+  "nome": "Sanduicheira Elétrica Cadence SAN400 Preta",
+  "precos": [
+   [
+    "2026-11-06",
+    95.59
+   ]
+  ],
+  "categoria": "casa"
  }
 }
