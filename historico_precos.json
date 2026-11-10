@@ -95,6 +95,10 @@
    [
     "2026-11-07",
     139.41
+   ],
+   [
+    "2026-11-10",
+    139.41
    ]
   ],
   "categoria": "pet"
@@ -3480,7 +3484,7 @@
    ],
    [
     "2026-11-10",
-    314.72
+    324.9
    ]
   ],
   "categoria": "casa"
@@ -4092,7 +4096,7 @@
    ],
    [
     "2026-11-10",
-    142.98
+    147.98
    ]
   ],
   "categoria": "fitness"
@@ -9274,7 +9278,7 @@
    ],
    [
     "2026-11-10",
-    218.83
+    199.89
    ]
   ],
   "categoria": "casa"
@@ -9863,6 +9867,10 @@
    [
     "2026-11-09",
     196.0
+   ],
+   [
+    "2026-11-10",
+    196.0
    ]
   ],
   "categoria": "tecnologia"
@@ -10326,6 +10334,10 @@
    ],
    [
     "2026-11-09",
+    572.2
+   ],
+   [
+    "2026-11-10",
     572.2
    ]
   ],
@@ -11586,7 +11598,7 @@
    ],
    [
     "2026-11-10",
-    95.59
+    94.59
    ]
   ],
   "categoria": "casa"
@@ -11600,5 +11612,15 @@
    ]
   ],
   "categoria": "fitness"
+ },
+ "escorredor de louça inoxidável 2 andares drenagem automática bandeja grande 360o organizador pia com porta talheres tigelas pratos": {
+  "nome": "Escorredor De Louça Inoxidável 2 Andares Drenagem Automática Bandeja Grande 360o Organizador Pia Com Porta Talheres Tigelas Pratos",
+  "precos": [
+   [
+    "2026-11-10",
+    119.99
+   ]
+  ],
+  "categoria": "casa"
  }
 }
